@@ -1,0 +1,130 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* * CALENDÃRIO LIMPEZA - FOLHA DE ESTILOS
+ * ContÃ©m estilos personalizados, animaÃ§Ãµes e overrides do Tailwind.
+ */
+
+:root {
+    --primary: #f40009;
+    --bg-body: #e2e8f0; 
+    --surface: #ffffff;
+    --glass-border: rgba(255, 255, 255, 0.5);
+}
+
+body {
+    font-family: 'Inter', sans-serif;
+    background-color: var(--bg-body);
+    color: #0f172a;
+    overflow-x: hidden;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.font-display { font-family: 'Outfit', sans-serif; }
+
+/* --- FUNDO AMBIENTE --- */
+.ambient-bg {
+    position: fixed; inset: 0; z-index: -1;
+    background: radial-gradient(circle at 50% 0%, rgba(244,0,9,0.03) 0%, transparent 60%),
+                radial-gradient(circle at 100% 100%, rgba(59,130,246,0.05) 0%, transparent 60%);
+}
+
+.grid-pattern {
+    position: fixed; inset: 0; z-index: -1; opacity: 0.3;
+    background-image: linear-gradient(#cbd5e1 1px, transparent 1px), 
+                      linear-gradient(90deg, #cbd5e1 1px, transparent 1px);
+    background-size: 32px 32px;
+    mask-image: radial-gradient(circle at center, black 60%, transparent 100%);
+}
+
+/* --- UI ELEMENTS --- */
+.glass-panel {
+    background: rgba(255, 255, 255, 0.9);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.8);
+    box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.05), 0 4px 10px -2px rgba(0, 0, 0, 0.02);
+}
+
+.card-hover {
+    transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+}
+.card-hover:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 15px 30px -5px rgba(0, 0, 0, 0.1);
+    border-color: rgba(244, 0, 9, 0.3);
+}
+.card-hover:active { transform: scale(0.98); }
+
+/* AnimaÃ§Ã£o do Avatar (Login) */
+.avatar-ring {
+    position: absolute; inset: -8px; border-radius: 50%;
+    border: 1px solid rgba(244, 0, 9, 0.2); opacity: 0;
+    animation: ringPulse 3s infinite cubic-bezier(0.4, 0, 0.6, 1);
+}
+.avatar-ring:nth-child(2) { animation-delay: 0.6s; }
+.avatar-ring:nth-child(3) { animation-delay: 1.2s; }
+
+@keyframes ringPulse {
+    0% { transform: scale(0.8); opacity: 0.5; border-width: 2px; }
+    100% { transform: scale(2); opacity: 0; border-width: 0px; }
+}
+
+/* Mobile Sheet (Modal Inferior) */
+.bottom-sheet {
+    border-radius: 2rem 2rem 0 0;
+    box-shadow: 0 -10px 40px rgba(0,0,0,0.15);
+}
+@media (min-width: 640px) {
+    .bottom-sheet { border-radius: 1.5rem; }
+}
+
+/* Scroll Clean (Barra de rolagem personalizada) */
+.clean-scroll::-webkit-scrollbar { width: 4px; }
+.clean-scroll::-webkit-scrollbar-track { background: transparent; }
+.clean-scroll::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+.clean-scroll::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+
+/* BotÃµes de Dia da Semana (RecorrÃªncia) */
+.day-toggle {
+    width: 32px; height: 32px;
+    border-radius: 9999px;
+    font-size: 10px; font-weight: 800;
+    display: flex; align-items: center; justify-content: center;
+    border: 1px solid #e2e8f0;
+    background-color: #f8fafc;
+    color: #94a3b8;
+    transition: all 0.2s ease;
+}
+.day-toggle.selected {
+    background-color: #f40009;
+    color: white;
+    border-color: #f40009;
+    box-shadow: 0 4px 10px rgba(244, 0, 9, 0.3);
+    transform: scale(1.1);
+}
+
+/* Item arrastÃ¡vel (Drag & Drop) */
+.draggable-item {
+    cursor: grab;
+}
+.draggable-item:active {
+    cursor: grabbing;
+}
+.dragging {
+    opacity: 0.5;
+    transform: scale(0.98);
+    box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+    border-color: #f40009;
+}
+
+/* UtilitÃ¡rios */
+input[type="file"] { display: none; }
+
+/* AnimaÃ§Ã£o do botÃ£o de instalar */
+.install-pulse { animation: bounce 2s infinite; }
+@keyframes bounce {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-5px); }
+}

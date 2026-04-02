@@ -1,0 +1,15 @@
+node_modules/
+dist/
+*.log
+.DS_Store
+
+# Local backups created during fixes
+*.bak.*
+
+# Vite
+.vite/
+
+# Env
+.env
+.env.*
+!.env.example

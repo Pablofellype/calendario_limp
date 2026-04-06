@@ -165,7 +165,7 @@ window.handleRealPhoto = function(input, taskId) {
                         return;
                     }
                     try {
-                        const newPhotos = [base64String];
+                        const newPhotos = [...(task.photos || []), base64String];
                         await updateDoc(doc(db, task.path), { 
                             photos: newPhotos,
                             hasPhotoProof: true 

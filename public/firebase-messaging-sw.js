@@ -34,8 +34,8 @@ self.addEventListener('push', (event) => {
 
   const options = {
     body,
-    icon: 'https://i.postimg.cc/nrCMQ8mx/logo-calendario.jpg',
-    badge: 'https://i.postimg.cc/nrCMQ8mx/logo-calendario.jpg',
+    icon: 'https://i.postimg.cc/c4LqxjXc/capa-calendario-nova.png',
+    badge: 'https://i.postimg.cc/c4LqxjXc/capa-calendario-nova.png',
     data
   };
 

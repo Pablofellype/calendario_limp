@@ -19,7 +19,7 @@ const manifest = {
     "start_url": ".",
     "display": "standalone",
     "background_color": "#f8fafc",
-    "theme_color": "#f40009",
+    "theme_color": "#e41e26",
     "icons": [{ "src": "img/logo_administrativo.png", "sizes": "192x192", "type": "image/png" }]
 };
 const link = document.createElement('link');
@@ -211,10 +211,10 @@ window.showCustomAlert = function(message, type = 'error') {
             btn.classList.add('bg-green-600', 'hover:bg-green-700', 'shadow-green-500/20');
         } else {
             // Estilo VERMELHO (Erro/Atenção)
-            iconContainer.classList.add('bg-red-50', 'text-[#f40009]', 'ring-red-50');
+            iconContainer.classList.add('bg-red-50', 'text-[#e41e26]', 'ring-red-50');
             if(icon) icon.setAttribute('data-lucide', 'alert-triangle');
             if(title) title.innerText = "Atenção";
-            btn.classList.add('bg-[#f40009]', 'hover:bg-[#d00008]', 'shadow-red-500/20');
+            btn.classList.add('bg-[#e41e26]', 'hover:bg-[#c61a21]', 'shadow-red-500/20');
         }
 
         lucide.createIcons();
@@ -301,7 +301,7 @@ function completeLogin() {
         requestNotificationPermission();
 
         const isAdmin = state.user.role === 'admin';
-        const roleColor = isAdmin ? 'text-[#f40009] border-[#f40009]/20' : 'text-blue-600 border-blue-200';
+        const roleColor = isAdmin ? 'text-[#e41e26] border-[#e41e26]/20' : 'text-blue-600 border-blue-200';
         const name = state.user.name || state.user.nome || (isAdmin ? 'Admin' : 'Colab');
         badge.innerText = `${name.split(' ')[0]} (${isAdmin ? 'Admin' : 'Colab'})`;
         badge.className = `text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full border bg-white shadow-sm ${roleColor}`;
@@ -743,7 +743,7 @@ function renderCalendar() {
         
         const cell = document.createElement('div');
         cell.className = `relative min-h-[80px] sm:min-h-[120px] p-2 sm:p-3 rounded-2xl border transition-all cursor-pointer group flex flex-col justify-between overflow-hidden
-            ${isToday ? 'bg-white border-[#f40009] ring-4 ring-[#f40009]/5 shadow-xl z-10' : 
+            ${isToday ? 'bg-white border-[#e41e26] ring-4 ring-[#e41e26]/5 shadow-xl z-10' : 
               dayTasks.length > 0 ? 'bg-[#fff1f2] border-red-100 hover:bg-white hover:shadow-lg' : 
               'bg-white/60 border-transparent hover:bg-white hover:shadow-lg hover:-translate-y-1'}`;
         
@@ -757,7 +757,7 @@ function renderCalendar() {
         });
         if(dayTasks.length > 3) tasksHTML += `<div class="hidden sm:block text-[9px] font-bold text-slate-400 pl-1">+${dayTasks.length - 3}</div>`;
 
-        cell.innerHTML = `<div class="flex justify-between items-start"><span class="flex items-center justify-center font-bold rounded-lg text-sm sm:text-base ${isToday ? 'bg-[#f40009] text-white w-7 h-7 sm:w-8 sm:h-8 shadow-md' : (dayTasks.length > 0 ? 'text-[#f40009]' : 'text-slate-600')}">${day}</span></div><div class="mt-2 space-y-0.5 sm:space-y-0">${tasksHTML}</div>`;
+        cell.innerHTML = `<div class="flex justify-between items-start"><span class="flex items-center justify-center font-bold rounded-lg text-sm sm:text-base ${isToday ? 'bg-[#e41e26] text-white w-7 h-7 sm:w-8 sm:h-8 shadow-md' : (dayTasks.length > 0 ? 'text-[#e41e26]' : 'text-slate-600')}">${day}</span></div><div class="mt-2 space-y-0.5 sm:space-y-0">${tasksHTML}</div>`;
         grid.appendChild(cell);
     }
     lucide.createIcons();
@@ -833,7 +833,7 @@ function renderTaskList(dateKey) {
             contentHTML = `
                 <div class="flex flex-col gap-3 w-full bg-slate-50 p-3 rounded-xl border border-slate-200">
                     <label class="text-[10px] font-bold text-slate-400 uppercase">Editar Título</label>
-                    <input type="text" id="edit-title-${task.id}" value="${task.title}" oninput="forceUppercase(this)" class="w-full bg-white border border-slate-200 rounded-lg px-3 py-2 text-sm font-bold outline-none focus:border-[#f40009]">
+                    <input type="text" id="edit-title-${task.id}" value="${task.title}" oninput="forceUppercase(this)" class="w-full bg-white border border-slate-200 rounded-lg px-3 py-2 text-sm font-bold outline-none focus:border-[#e41e26]">
                     <div>
                         <p class="text-[10px] font-bold text-slate-400 uppercase mb-2">Colaboradores</p>
                         <div id="tags-container-${task.id}" class="flex flex-wrap mb-2 gap-1">${tagsHTML}</div>
@@ -843,14 +843,14 @@ function renderTaskList(dateKey) {
                             <button onclick="addLocalTag('${task.id}')" class="bg-blue-500 text-white p-2 rounded-lg"><i data-lucide="plus" class="w-4 h-4"></i></button>
                         </div>
                     </div>
-                    <button onclick="saveEdit('${task.id}')" class="w-full py-2 bg-[#f40009] text-white rounded-lg font-bold text-xs shadow-md">SALVAR ALTERAÇÕES</button>
+                    <button onclick="saveEdit('${task.id}')" class="w-full py-2 bg-[#e41e26] text-white rounded-lg font-bold text-xs shadow-md">SALVAR ALTERAÇÕES</button>
                 </div>`;
         } else {
             let checkbox = '';
             if (!state.user) {
                 checkbox = `<div class="w-6 h-6 rounded-full border-2 border-slate-300 mr-3 bg-white"></div>`;
             } else if (canEdit) {
-                checkbox = `<button onclick="toggleTask('${task.id}')" class="w-6 h-6 rounded-full border-2 mr-3 flex items-center justify-center transition-all ${task.completed ? 'bg-emerald-500 border-emerald-500 scale-110' : 'border-slate-300 hover:border-[#f40009]'}">${task.completed ? '<i data-lucide="check" class="text-white w-3.5 h-3.5"></i>' : ''}</button>`;
+                checkbox = `<button onclick="toggleTask('${task.id}')" class="w-6 h-6 rounded-full border-2 mr-3 flex items-center justify-center transition-all ${task.completed ? 'bg-emerald-500 border-emerald-500 scale-110' : 'border-slate-300 hover:border-[#e41e26]'}">${task.completed ? '<i data-lucide="check" class="text-white w-3.5 h-3.5"></i>' : ''}</button>`;
             } else {
                 checkbox = `<div class="w-6 h-6 rounded-full border-2 border-slate-200 mr-3 flex items-center justify-center bg-slate-100 text-slate-400 cursor-not-allowed" title="Restrito"><i data-lucide="lock" class="w-3 h-3"></i></div>`;
             }
@@ -863,9 +863,9 @@ function renderTaskList(dateKey) {
         }
 
         let photosHTML = (task.photos || []).map((p, i) => `<div class="relative group/photo w-12 h-12 rounded-xl border border-white shadow-sm overflow-hidden hover:shadow-md"><img src="${p}" class="w-full h-full object-cover cursor-pointer" onclick="viewImage('${p}')">${state.user ? `<button onclick="askDelete('photo', '${task.id}', null, ${i})" class="absolute top-0 right-0 bg-red-500 text-white p-0.5 rounded-bl-lg opacity-0 group-hover/photo:opacity-100"><i data-lucide="x" class="w-3 h-3"></i></button>` : ''}</div>`).join('');
-        let uploadBtn = (state.user && !task.completed && canEdit) ? `<label class="h-12 px-3 rounded-lg border border-dashed border-slate-300 text-slate-400 text-xs font-bold hover:text-[#f40009] hover:border-[#f40009] flex items-center gap-1 cursor-pointer bg-white"><input type="file" accept="image/*" capture="environment" onchange="handleRealPhoto(this, '${task.id}')"><i data-lucide="camera" class="w-4 h-4"></i> <span class="hidden sm:inline">Foto</span></label>` : '';
-        let commentsHTML = (task.comments || []).map((c, i) => `<div class="text-[11px] bg-slate-50 p-3 rounded-xl border border-slate-100 mb-2 group/comment"><div class="flex justify-between items-center mb-1"><span class="font-bold text-[#f40009]">${c.author} <span class="text-slate-400 font-normal ml-1">#${c.matricula || 'N/A'}</span></span>${state.user ? `<button onclick="askDelete('comment', '${task.id}', null, ${i})" class="text-slate-300 hover:text-red-500 opacity-0 group-hover/comment:opacity-100"><i data-lucide="trash" class="w-3 h-3"></i></button>` : ''}</div><div class="text-slate-600 pl-3 border-l-2 border-slate-200">${c.text}</div></div>`).join('');
-        let commentInput = state.user ? `<div class="mt-4 flex gap-2"><input type="text" id="comment-${task.id}" oninput="forceUppercase(this)" placeholder="ESCREVER OBSERVAÇÃO..." class="flex-1 bg-white border border-slate-200 rounded-xl px-4 py-2 text-xs outline-none"><button onclick="prepareComment('${task.id}')" class="p-2 bg-slate-100 rounded-xl text-slate-400 hover:text-white hover:bg-[#f40009]"><i data-lucide="send" width="16"></i></button></div>` : '';
+        let uploadBtn = (state.user && !task.completed && canEdit) ? `<label class="h-12 px-3 rounded-lg border border-dashed border-slate-300 text-slate-400 text-xs font-bold hover:text-[#e41e26] hover:border-[#e41e26] flex items-center gap-1 cursor-pointer bg-white"><input type="file" accept="image/*" capture="environment" onchange="handleRealPhoto(this, '${task.id}')"><i data-lucide="camera" class="w-4 h-4"></i> <span class="hidden sm:inline">Foto</span></label>` : '';
+        let commentsHTML = (task.comments || []).map((c, i) => `<div class="text-[11px] bg-slate-50 p-3 rounded-xl border border-slate-100 mb-2 group/comment"><div class="flex justify-between items-center mb-1"><span class="font-bold text-[#e41e26]">${c.author} <span class="text-slate-400 font-normal ml-1">#${c.matricula || 'N/A'}</span></span>${state.user ? `<button onclick="askDelete('comment', '${task.id}', null, ${i})" class="text-slate-300 hover:text-red-500 opacity-0 group-hover/comment:opacity-100"><i data-lucide="trash" class="w-3 h-3"></i></button>` : ''}</div><div class="text-slate-600 pl-3 border-l-2 border-slate-200">${c.text}</div></div>`).join('');
+        let commentInput = state.user ? `<div class="mt-4 flex gap-2"><input type="text" id="comment-${task.id}" oninput="forceUppercase(this)" placeholder="ESCREVER OBSERVAÇÃO..." class="flex-1 bg-white border border-slate-200 rounded-xl px-4 py-2 text-xs outline-none"><button onclick="prepareComment('${task.id}')" class="p-2 bg-slate-100 rounded-xl text-slate-400 hover:text-white hover:bg-[#e41e26]"><i data-lucide="send" width="16"></i></button></div>` : '';
 
         const item = document.createElement('div');
         item.className = `task-item draggable-item opacity-0 translate-y-4 group bg-white p-5 rounded-2xl border border-slate-100 shadow-sm hover:shadow-lg transition-all duration-300 ${task.completed ? 'opacity-60 bg-slate-50' : ''}`;
@@ -999,7 +999,7 @@ window.toggleTask = async function(id) {
             completed: !task.completed, 
             completedBy: task.completed ? null : userName 
         });
-        if (!task.completed) confetti({ particleCount: 150, spread: 70, origin: { y: 0.6 }, colors: ['#f40009', '#ffffff'] });
+        if (!task.completed) confetti({ particleCount: 150, spread: 70, origin: { y: 0.6 }, colors: ['#e41e26', '#ffffff'] });
     } catch (e) { console.error(e); }
 }
 
@@ -1158,12 +1158,12 @@ window.generateShareCard = async function() {
     document.getElementById('card-date-day').innerText = date.getDate();
     document.getElementById('card-date-month').innerText = date.toLocaleDateString('pt-BR', { month: 'short' }).replace('.','').toUpperCase();
     const days = ['DOMINGO', 'SEGUNDA', 'TERÇA', 'QUARTA', 'QUINTA', 'SEXTA', 'SÁBADO'];
-    document.getElementById('card-subtitle').innerHTML = `<span class="w-1.5 h-1.5 rounded-full bg-[#f40009]"></span> PROGRAMAÇÃO • ${days[date.getDay()]}`;
+    document.getElementById('card-subtitle').innerHTML = `<span class="w-1.5 h-1.5 rounded-full bg-[#e41e26]"></span> PROGRAMAÇÃO • ${days[date.getDay()]}`;
     const listEl = document.getElementById('card-task-list');
     listEl.innerHTML = tasks.length === 0 ? '<div class="text-center py-8 text-slate-400 italic text-sm">DIA LIVRE.</div>' : '';
     tasks.forEach(task => {
         const assignees = task.assignee.split(',').map(n => `<span class="bg-slate-100 text-slate-600 px-2 py-0.5 rounded text-[10px] font-bold border border-slate-200 uppercase">${n}</span>`).join('');
-        listEl.innerHTML += `<div class="bg-white p-3.5 rounded-xl border-l-4 border-[#f40009] shadow-sm flex flex-col gap-1.5 mb-2"><h4 class="font-bold text-slate-800 text-sm">${task.title}</h4><div class="flex flex-wrap gap-1 mt-0.5">${assignees}</div></div>`;
+        listEl.innerHTML += `<div class="bg-white p-3.5 rounded-xl border-l-4 border-[#e41e26] shadow-sm flex flex-col gap-1.5 mb-2"><h4 class="font-bold text-slate-800 text-sm">${task.title}</h4><div class="flex flex-wrap gap-1 mt-0.5">${assignees}</div></div>`;
     });
     const modal = document.getElementById('share-modal');
     modal.classList.remove('hidden'); gsap.to(modal, { opacity: 1, duration: 0.3 });

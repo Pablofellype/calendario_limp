@@ -1,343 +1,551 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="pt-BR" class="overflow-x-hidden">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Calendario Limpeza | Gestao</title>
-<meta name="description" content="Portal de gestao de limpeza: escala, tarefas, comprovantes e relatorios.">
-    <meta name="theme-color" content="#f40009">
+    <title>Calendario DPA | Gestão</title>
+    <meta name="description" content="Portal de gestao de limpeza: escala, tarefas, comprovantes e relatorios.">
+    <meta name="theme-color" content="#e41e26">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <link rel="apple-touch-icon" href="https://i.postimg.cc/nrCMQ8mx/logo-calendario.jpg">
+    <link rel="apple-touch-icon" href="https://i.postimg.cc/c4LqxjXc/capa-calendario-nova.png">
     <meta name="mobile-web-app-capable" content="yes">
-    
-    
-    <link rel="manifest" href="/manifest.webmanifest">
-    <link rel="icon" href="https://i.postimg.cc/nrCMQ8mx/logo-calendario.jpg">
 
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@500;700;800;900&display=swap" rel="stylesheet">
+    <link rel="manifest" href="/manifest.webmanifest">
+    <link rel="icon" href="https://i.postimg.cc/c4LqxjXc/capa-calendario-nova.png">
+
+    <link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600;700;800;900&family=Archivo+Black&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="css/styles.css">
 </head>
-<body class="selection:bg-[#f40009] selection:text-white overflow-x-hidden">
+<body class="corp-app selection:bg-[#e41e26] selection:text-white overflow-x-hidden">
 
-    <div class="ambient-bg"></div>
-    <div class="grid-pattern"></div>
+    <section id="login-screen" class="min-h-screen flex flex-col overflow-hidden">
 
-    <section id="login-screen" class="min-h-screen flex flex-col items-center justify-center p-6 relative overflow-hidden">
-        <div class="text-center mb-8 relative z-10 login-item opacity-0 translate-y-4">
-            <div class="relative w-28 h-28 mx-auto mb-6 flex justify-center items-center">
-                <div class="avatar-ring"></div>
-                <div class="avatar-ring"></div>
-                <div class="w-28 h-28 bg-white rounded-full shadow-2xl flex items-center justify-center relative z-10 border-4 border-white overflow-hidden p-3">
-                    <img src="https://i.postimg.cc/nrCMQ8mx/logo-calendario.jpg" alt="Logo" class="w-full h-full object-contain" onerror="this.src='https://placehold.co/100x100?text=LOGO'">
+        <!-- HEADER VERMELHO -->
+        <div class="login-brand-area relative bg-[#e41e26] text-white text-center px-4 sm:px-6 pt-10 pb-24 sm:pt-16 sm:pb-32 overflow-hidden login-item opacity-0 translate-y-4">
+            <!-- Camada escura sutil no topo -->
+            <div class="absolute inset-0 pointer-events-none" style="background: linear-gradient(180deg, rgba(0,0,0,0.15) 0%, transparent 50%, rgba(0,0,0,0.05) 100%);"></div>
+
+            <div class="relative z-10 max-w-sm mx-auto">
+                <div class="w-[88px] h-[88px] sm:w-24 sm:h-24 mx-auto mb-5 bg-white rounded-2xl p-1 shadow-lg overflow-hidden">
+                    <img src="https://i.postimg.cc/c4LqxjXc/capa-calendario-nova.png" alt="Logo" class="w-full h-full object-cover rounded-xl" onerror="this.src='https://placehold.co/100x100?text=LOGO'">
                 </div>
+                <h1 class="display-heading text-[26px] sm:text-3xl text-white mb-2" style="line-height:1.1">
+                    CALENDARIO DPA
+                </h1>
+                <p class="text-[12px] sm:text-[13px] font-medium text-white/60">Organize escalas e gerencie sua equipe</p>
             </div>
-            <h1 class="text-3xl md:text-4xl font-display font-black tracking-tight text-slate-800 mb-1">
-                Calendario<span class="text-[#f40009]">Limpeza</span>
-            </h1>
-            <p class="text-xs font-bold text-slate-400 uppercase tracking-widest">Gestao de Limpeza</p>
         </div>
 
-        <div class="w-full max-w-sm relative z-10 login-item opacity-0 translate-y-4">
-            <div class="bg-white rounded-2xl shadow-xl border border-slate-100 overflow-hidden p-6">
-                <div id="login-mode-title" class="text-center mb-6">
-                    <h2 class="text-lg font-bold text-slate-800">Acesso Colaborador</h2>
-                    <p class="text-xs text-slate-500">Digite sua matricula para entrar</p>
+        <!-- AREA DO FORMULARIO -->
+        <div class="flex-1 bg-[#f5f5f5] relative px-5 pb-8">
+            <div class="w-full max-w-[420px] mx-auto -mt-16 sm:-mt-24 relative z-10">
+
+                <!-- Card principal -->
+                <div class="login-item opacity-0 translate-y-4">
+                    <div class="bg-white rounded-2xl p-6 sm:p-8 shadow-xl" style="box-shadow: 0 8px 30px rgba(0,0,0,0.08), 0 2px 8px rgba(0,0,0,0.04);">
+
+                        <!-- Tab Bar -->
+                        <div id="login-tab-bar" class="login-tab-bar mb-6" data-active="0">
+                            <button onclick="setLoginMode('employee')" id="mode-employee" class="login-tab active">Colaborador</button>
+                            <button onclick="setLoginMode('admin')" id="mode-admin" class="login-tab">Administrador</button>
+                            <button onclick="handleViewerLogin()" id="mode-viewer" class="login-tab">Visitante</button>
+                        </div>
+
+                        <div id="login-mode-title" class="mb-5">
+                            <h2 class="text-lg font-black text-[#151515] tracking-tight">Acesso Colaborador</h2>
+                            <p class="text-[13px] text-[#9ca3af] mt-0.5">Digite sua matrícula para entrar</p>
+                        </div>
+
+                        <form id="form-employee" onsubmit="handleEmployeeLogin(event)" class="flex flex-col gap-4">
+                            <div>
+                                <label class="text-[10px] font-bold text-[#9ca3af] uppercase tracking-[0.15em] mb-1.5 block">Matricula</label>
+                                <div class="border-2 border-[#eee] rounded-xl px-4 py-3 flex items-center gap-3 focus-within:border-[#e41e26] transition-colors bg-[#fafafa]">
+                                    <i data-lucide="hash" class="text-[#ccc] w-4 h-4 flex-shrink-0"></i>
+                                    <input type="number" id="login-matricula" placeholder="Ex: 1001" class="bg-transparent border-none outline-none text-[#151515] font-bold w-full placeholder-[#ccc] text-[15px]" required>
+                                </div>
+                            </div>
+                            <div>
+                                <label class="text-[10px] font-bold text-[#9ca3af] uppercase tracking-[0.15em] mb-1.5 block">PIN de acesso</label>
+                                <div class="border-2 border-[#eee] rounded-xl px-4 py-3 flex items-center gap-3 focus-within:border-[#e41e26] transition-colors bg-[#fafafa]">
+                                    <i data-lucide="lock" class="text-[#ccc] w-4 h-4 flex-shrink-0"></i>
+                                    <input type="password" id="login-pin" minlength="4" placeholder="4+ caracteres" class="bg-transparent border-none outline-none text-[#151515] font-bold w-full placeholder-[#ccc] text-[15px]" required>
+                                    <button type="button" id="login-pin-toggle" onclick="togglePasswordField('login-pin', this)" class="text-[#ccc] hover:text-[#e41e26] transition-colors"><i data-lucide="eye" class="w-4 h-4"></i></button>
+                                </div>
+                            </div>
+                            <button type="submit" class="ui-action-button relative overflow-hidden w-full py-3.5 bg-[#e41e26] hover:bg-[#c61a21] text-white rounded-xl font-extrabold text-[15px] tracking-wide active:scale-[0.97] transition-all mt-2" style="box-shadow: 0 4px 14px rgba(228,30,38,0.3);">
+                                Entrar
+                            </button>
+                        </form>
+
+                        <form id="form-admin" onsubmit="handleAdminLogin(event)" class="hidden flex-col gap-4">
+                            <div>
+                                <label class="text-[10px] font-bold text-[#9ca3af] uppercase tracking-[0.15em] mb-1.5 block">Email</label>
+                                <div class="border-2 border-[#eee] rounded-xl px-4 py-3 flex items-center gap-3 focus-within:border-[#e41e26] transition-colors bg-[#fafafa]">
+                                    <i data-lucide="mail" class="text-[#ccc] w-4 h-4 flex-shrink-0"></i>
+                                    <input type="email" id="login-email" placeholder="admin@empresa.com" class="bg-transparent border-none outline-none text-[#151515] font-semibold w-full text-[15px] placeholder-[#ccc]">
+                                </div>
+                            </div>
+                            <div>
+                                <label class="text-[10px] font-bold text-[#9ca3af] uppercase tracking-[0.15em] mb-1.5 block">Senha</label>
+                                <div class="border-2 border-[#eee] rounded-xl px-4 py-3 flex items-center gap-3 focus-within:border-[#e41e26] transition-colors bg-[#fafafa]">
+                                    <i data-lucide="lock" class="text-[#ccc] w-4 h-4 flex-shrink-0"></i>
+                                    <input type="password" id="login-password" placeholder="Sua senha" class="bg-transparent border-none outline-none text-[#151515] font-semibold w-full text-[15px] placeholder-[#ccc]">
+                                </div>
+                            </div>
+                            <button type="submit" class="ui-action-button relative overflow-hidden w-full py-3.5 bg-[#151515] hover:bg-[#0a0a0a] text-white rounded-xl font-extrabold text-[15px] tracking-wide active:scale-[0.97] transition-all mt-2 flex items-center justify-center gap-2 shadow-lg">
+                                <i data-lucide="shield-check" class="w-4 h-4"></i> Acessar Painel
+                            </button>
+                        </form>
+                    </div>
+
                 </div>
-                <form id="form-employee" onsubmit="handleEmployeeLogin(event)" class="flex flex-col gap-4">
-                    <div class="bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 flex items-center gap-3 focus-within:border-[#f40009] focus-within:ring-1 focus-within:ring-[#f40009]/20 transition-all">
-                        <i data-lucide="hash" class="text-slate-400 w-5 h-5"></i>
-                        <input type="number" id="login-matricula" placeholder="Ex: 1001" class="bg-transparent border-none outline-none text-slate-800 font-bold w-full placeholder-slate-400" required>
-                    </div>
-                    <div class="bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 flex items-center gap-3 focus-within:border-[#f40009] focus-within:ring-1 focus-within:ring-[#f40009]/20 transition-all">
-                        <i data-lucide="lock" class="text-slate-400 w-5 h-5"></i>
-                        <input type="password" id="login-pin" inputmode="numeric" minlength="4" placeholder="PIN de acesso" class="bg-transparent border-none outline-none text-slate-800 font-bold w-full placeholder-slate-400" required><button type="button" id="login-pin-toggle" onclick="togglePasswordField('login-pin', this)" class="text-slate-400 hover:text-slate-600 transition-colors"><i data-lucide="eye" class="w-5 h-5"></i></button>
-                    </div>
-                    <button type="submit" class="w-full py-3.5 bg-[#f40009] hover:bg-[#d00008] text-white rounded-xl font-bold shadow-lg shadow-red-500/30 active:scale-95 transition-all flex items-center justify-center gap-2">
-                        Entrar Agora <i data-lucide="arrow-right" class="w-4 h-4"></i>
-                    </button>
-                </form>
-                <form id="form-admin" onsubmit="handleAdminLogin(event)" class="hidden flex-col gap-4">
-                    <div class="bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 flex items-center gap-3 focus-within:border-[#f40009] transition-all">
-                        <i data-lucide="mail" class="text-slate-400 w-5 h-5"></i>
-                        <input type="email" id="login-email" placeholder="Email Administrativo" class="bg-transparent border-none outline-none text-slate-800 font-medium w-full text-sm placeholder-slate-400">
-                    </div>
-                    <div class="bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 flex items-center gap-3 focus-within:border-[#f40009] transition-all">
-                        <i data-lucide="lock" class="text-slate-400 w-5 h-5"></i>
-                        <input type="password" id="login-password" placeholder="Senha" class="bg-transparent border-none outline-none text-slate-800 font-medium w-full text-sm placeholder-slate-400">
-                    </div>
-                    <button type="submit" class="w-full py-3.5 bg-slate-800 hover:bg-slate-900 text-white rounded-xl font-bold shadow-lg active:scale-95 transition-all flex items-center justify-center gap-2">
-                        <i data-lucide="shield-check" class="w-4 h-4"></i> Acessar Painel
-                    </button>
-                </form>
             </div>
-            <button onclick="toggleLoginMode()" id="toggle-login-btn" class="w-full text-center mt-6 text-xs font-bold text-slate-400 hover:text-[#f40009] transition-colors py-2">
-                Sou Administrador
-            </button>
-            <button onclick="handleViewerLogin()" class="w-full text-center mt-2 text-xs font-bold text-slate-400 hover:text-emerald-600 transition-colors py-2 flex items-center justify-center gap-1.5">
-                <i data-lucide="eye" class="w-3.5 h-3.5"></i> Apenas Visualizar
-            </button>
-        </div>
-        <div class="mt-8 text-center login-item opacity-0 translate-y-4">
-            <p class="text-[10px] font-bold text-slate-300 uppercase tracking-widest flex items-center gap-1.5 justify-center">
-                <i data-lucide="server" class="w-3 h-3"></i> Sistema Online
-            </p>
         </div>
     </section>
 
-    <div id="loading-screen" class="fixed inset-0 z-[200] bg-white flex flex-col items-center justify-center hidden">
+    <div id="loading-screen" class="fixed inset-0 z-[200] bg-[#fcfcfc] flex flex-col items-center justify-center hidden">
         <div class="relative w-20 h-20 mb-6">
             <div class="w-20 h-20 bg-white rounded-full shadow-2xl flex items-center justify-center border-4 border-white overflow-hidden p-3">
-                <img src="https://i.postimg.cc/nrCMQ8mx/logo-calendario.jpg" alt="Logo" class="w-full h-full object-contain">
+                <img src="https://i.postimg.cc/c4LqxjXc/capa-calendario-nova.png" alt="Logo" class="w-full h-full object-contain">
             </div>
         </div>
-        <div class="w-10 h-10 border-4 border-slate-200 border-t-[#f40009] rounded-full animate-spin mb-4"></div>
-        <p class="text-sm font-bold text-slate-500 uppercase tracking-widest">Carregando atividades...</p>
+        <div class="w-10 h-10 border-4 border-[#e5e7eb] border-t-[#e41e26] rounded-full animate-spin mb-4"></div>
+        <p class="text-sm font-bold text-[#6b7280] uppercase tracking-[0.22em]">Carregando atividades...</p>
     </div>
 
     <section id="app-screen" class="hidden min-h-screen pb-20">
-        <header class="sticky top-0 z-30 glass-panel border-t-0 border-x-0">
-            <div class="max-w-6xl mx-auto px-4 sm:px-6 py-3 flex items-center justify-between gap-2">
-                <div class="flex items-center gap-2 min-w-0 flex-shrink">
-                    <div class="w-10 h-10 bg-white rounded-xl flex items-center justify-center shadow-lg p-1 flex-shrink-0">
-                        <img src="https://i.postimg.cc/nrCMQ8mx/logo-calendario.jpg" alt="Logo" class="w-full h-full object-contain" onerror="this.src='https://placehold.co/50x50?text=L'">
+        <header class="sticky top-0 z-30 corp-header">
+            <div class="max-w-5xl mx-auto px-4 sm:px-6 py-3 flex items-center justify-between gap-2">
+                <div class="flex items-center gap-2 sm:gap-3 min-w-0 flex-shrink">
+                    <div class="w-8 h-8 sm:w-10 sm:h-10 rounded-[10px] sm:rounded-[12px] overflow-hidden flex-shrink-0 corp-header-logo p-1 sm:p-1.5">
+                        <img src="https://i.postimg.cc/c4LqxjXc/capa-calendario-nova.png" alt="Logo" class="w-full h-full object-contain" onerror="this.src='https://placehold.co/50x50?text=L'">
                     </div>
                     <div class="min-w-0">
-                        <h1 class="text-sm sm:text-lg font-display font-bold leading-none text-slate-900 truncate">Calendario<span class="text-[#f40009]">Limpeza</span></h1>
-                        <span id="user-role-badge" class="text-[10px] font-bold text-slate-400 uppercase tracking-wider truncate block max-w-[120px] sm:max-w-none">...</span>
+                        <h1 class="text-sm sm:text-base lg:text-lg font-display font-black leading-none text-[#151515] truncate tracking-tight">Calendario<span class="text-[#e41e26]">DPA</span></h1>
+                        <span id="user-role-badge" class="text-[9px] sm:text-[10px] font-bold text-[#94a3b8] uppercase tracking-[0.18em] truncate block max-w-[90px] sm:max-w-[120px] lg:max-w-none">...</span>
                     </div>
                 </div>
-                <div class="flex gap-1.5 sm:gap-2 flex-shrink-0">
-                    <button id="btn-team-management" onclick="openTeamModal()" class="hidden group w-10 h-10 rounded-xl bg-blue-50 border border-blue-100 flex items-center justify-center text-blue-500 hover:bg-blue-100 hover:shadow-md transition-all" title="Gerenciar Equipe">
+                <div class="corp-header-actions flex gap-1 flex-shrink-0">
+                    <button id="btn-team-management" onclick="openTeamModal()" class="hidden group w-9 h-9 rounded-[10px] flex items-center justify-center text-[#6b7280] hover:text-blue-600 hover:bg-blue-50 transition-all" title="Gerenciar Equipe">
                         <i data-lucide="users" class="w-4 h-4"></i>
                     </button>
-                    <button id="btn-notifications" onclick="enableNotifications()" class="group w-10 h-10 rounded-xl bg-amber-50 border border-amber-200 flex items-center justify-center text-amber-600 hover:bg-amber-100 hover:shadow-md transition-all" title="Ativar notificacoes">
+                    <button onclick="resetOnboarding()" class="group w-9 h-9 rounded-[10px] flex items-center justify-center text-[#6b7280] hover:text-[#3b82f6] hover:bg-blue-50 transition-all" title="Tour do sistema">
+                        <i data-lucide="help-circle" class="w-4 h-4"></i>
+                    </button>
+                    <button id="btn-notifications" onclick="enableNotifications()" class="group w-9 h-9 rounded-[10px] flex items-center justify-center text-amber-500 hover:bg-amber-50 transition-all" title="Ativar notificações">
                         <i data-lucide="bell-off" class="w-4 h-4"></i>
                     </button>
-                    <button id="btn-report" onclick="generatePDFReport()" class="hidden group w-10 h-10 rounded-xl bg-slate-800 border border-slate-900 flex items-center justify-center text-white hover:bg-[#f40009] hover:border-[#f40009] hover:shadow-md transition-all" title="Baixar Relatorio">
+                    <button id="btn-report" onclick="generatePDFReport()" class="hidden group w-9 h-9 rounded-[10px] bg-[#151515] flex items-center justify-center text-white hover:bg-[#e41e26] transition-all" title="Baixar Relatório">
                         <i data-lucide="file-text" class="w-4 h-4"></i>
                     </button>
-                    <button onclick="logout()" class="group w-10 h-10 rounded-xl bg-white border border-slate-200 flex items-center justify-center text-slate-400 hover:text-red-500 hover:border-red-200 hover:bg-red-50 hover:shadow-md transition-all" title="Sair">
+                    <button onclick="logout()" class="group w-9 h-9 rounded-[10px] flex items-center justify-center text-[#94a3b8] hover:text-[#e41e26] hover:bg-[#fef2f2] transition-all" title="Sair">
                         <i data-lucide="log-out" class="w-4 h-4 group-hover:-translate-x-0.5 transition-transform"></i>
                     </button>
                 </div>
             </div>
         </header>
 
-        <main class="max-w-6xl mx-auto px-4 sm:px-6 mt-8">
-            <div class="flex items-center justify-between mb-8 app-content opacity-0 translate-y-4">
-                <button onclick="changeMonth(-1)" class="w-12 h-12 bg-white rounded-xl border border-slate-200 shadow-sm flex items-center justify-center text-slate-600 hover:text-[#f40009] hover:border-[#f40009] hover:-translate-x-1 transition-all group">
-                    <i data-lucide="chevron-left" class="w-5 h-5 group-hover:scale-110 transition-transform"></i>
+        <main class="max-w-5xl mx-auto px-2 sm:px-4 lg:px-6 mt-4 sm:mt-6 lg:mt-8">
+            <div class="flex items-center justify-between mb-3 sm:mb-4 lg:mb-6 app-content opacity-0 translate-y-4">
+                <button onclick="changeMonth(-1)" class="w-9 h-9 sm:w-11 sm:h-11 lg:w-12 lg:h-12 rounded-[10px] sm:rounded-[12px] border border-[#e5e7eb] bg-white flex items-center justify-center text-[#6b7280] hover:text-[#e41e26] hover:border-[#e41e26] hover:-translate-x-1 transition-all shadow-sm group">
+                    <i data-lucide="chevron-left" class="w-4 h-4 sm:w-5 sm:h-5 group-hover:scale-110 transition-transform"></i>
                 </button>
                 <div class="text-center group cursor-default">
-                    <h2 id="current-month" class="text-3xl sm:text-4xl font-display font-black text-slate-800 capitalize tracking-tight group-hover:scale-105 transition-transform drop-shadow-sm">Janeiro</h2>
-                    <p id="current-year" class="text-sm font-bold text-slate-400 tracking-[0.2em] mt-1 group-hover:text-[#f40009] transition-colors">2026</p>
+                    <h2 id="current-month" class="display-heading text-2xl sm:text-3xl lg:text-4xl text-[#151515] capitalize group-hover:scale-105 transition-transform" style="line-height:1">Janeiro</h2>
+                    <p id="current-year" class="text-[10px] sm:text-[11px] lg:text-xs font-bold text-[#94a3b8] tracking-[0.22em] mt-1 sm:mt-1.5 group-hover:text-[#e41e26] transition-colors">2026</p>
                 </div>
-                <button onclick="changeMonth(1)" class="w-12 h-12 bg-white rounded-xl border border-slate-200 shadow-sm flex items-center justify-center text-slate-600 hover:text-[#f40009] hover:border-[#f40009] hover:translate-x-1 transition-all group">
-                    <i data-lucide="chevron-right" class="w-5 h-5 group-hover:scale-110 transition-transform"></i>
+                <button onclick="changeMonth(1)" class="w-9 h-9 sm:w-11 sm:h-11 lg:w-12 lg:h-12 rounded-[10px] sm:rounded-[12px] border border-[#e5e7eb] bg-white flex items-center justify-center text-[#6b7280] hover:text-[#e41e26] hover:border-[#e41e26] hover:translate-x-1 transition-all shadow-sm group">
+                    <i data-lucide="chevron-right" class="w-4 h-4 sm:w-5 sm:h-5 group-hover:scale-110 transition-transform"></i>
                 </button>
             </div>
 
-            <div class="glass-panel rounded-[2rem] p-4 sm:p-8 shadow-2xl app-content opacity-0 translate-y-8 bg-white/80">
-                <div class="grid grid-cols-7 mb-4 text-center">
-                    <div class="text-[#f40009] font-bold text-[10px] sm:text-xs uppercase tracking-widest">Dom</div>
-                    <div class="text-slate-400 font-bold text-[10px] sm:text-xs uppercase tracking-widest">Seg</div>
-                    <div class="text-slate-400 font-bold text-[10px] sm:text-xs uppercase tracking-widest">Ter</div>
-                    <div class="text-slate-400 font-bold text-[10px] sm:text-xs uppercase tracking-widest">Qua</div>
-                    <div class="text-slate-400 font-bold text-[10px] sm:text-xs uppercase tracking-widest">Qui</div>
-                    <div class="text-slate-400 font-bold text-[10px] sm:text-xs uppercase tracking-widest">Sex</div>
-                    <div class="text-[#f40009] font-bold text-[10px] sm:text-xs uppercase tracking-widest">Sab</div>
+            <!-- FILTER BAR -->
+            <div id="filter-bar" class="mb-3 sm:mb-4 app-content opacity-0 translate-y-4">
+                <div class="bg-white rounded-[12px] sm:rounded-[14px] border border-[#e5e7eb] p-2 sm:p-3 lg:p-4" style="box-shadow: 0 2px 8px rgba(15,23,42,0.04)">
+                    <div class="flex flex-col sm:flex-row gap-2 sm:gap-3">
+                        <div class="relative flex-1">
+                            <i data-lucide="search" class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#94a3b8] pointer-events-none z-10"></i>
+                            <input id="filter-search" type="text" placeholder="Buscar atividade…" oninput="applyFilters()" class="w-full bg-[#fafafa] rounded-[10px] pl-10 pr-4 py-2.5 text-[13px] font-bold outline-none focus:ring-2 focus:ring-[#e41e26]/10 focus:bg-white focus:border-[#e41e26] transition-all border border-[#e5e7eb] placeholder-[#cbd5e1] text-[#151515]">
+                        </div>
+                        <div class="relative">
+                            <select id="filter-collaborator" onchange="applyFilters()" class="appearance-none bg-[#fafafa] rounded-[10px] pl-4 pr-10 py-2.5 text-[13px] font-bold outline-none focus:ring-2 focus:ring-[#e41e26]/10 focus:bg-white focus:border-[#e41e26] transition-all border border-[#e5e7eb] text-[#151515] cursor-pointer w-full sm:w-auto min-w-[160px]">
+                                <option value="">Todos</option>
+                            </select>
+                            <i data-lucide="chevron-down" class="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#94a3b8] pointer-events-none"></i>
+                        </div>
+                        <div class="flex gap-1.5 flex-wrap">
+                            <button onclick="setStatusFilter('all')" id="filter-status-all" class="filter-pill active">Todas</button>
+                            <button onclick="setStatusFilter('pending')" id="filter-status-pending" class="filter-pill filter-pill-pending">Pendentes</button>
+                            <button onclick="setStatusFilter('completed')" id="filter-status-completed" class="filter-pill filter-pill-completed">Concluídas</button>
+                        </div>
+                    </div>
+                    <div id="filter-active-indicator" class="hidden mt-3 flex items-center gap-2">
+                        <span class="text-[10px] font-bold text-[#e41e26] uppercase tracking-[0.15em] flex items-center gap-1.5"><i data-lucide="filter" class="w-3 h-3"></i> Filtros ativos</span>
+                        <button onclick="clearFilters()" class="text-[10px] font-bold text-[#94a3b8] hover:text-[#e41e26] uppercase tracking-[0.15em] transition-colors flex items-center gap-1">
+                            <i data-lucide="x" class="w-3 h-3"></i> Limpar
+                        </button>
+                    </div>
                 </div>
-                <div id="calendar-grid" class="grid grid-cols-7 gap-2 sm:gap-4"></div>
+            </div>
+
+            <!-- VIEW TOGGLE -->
+            <div id="view-toggle-container" class="flex justify-center mb-3 app-content opacity-0 translate-y-4">
+                <div class="flex rounded-lg border border-[#e5e7eb] overflow-hidden bg-[#fafafa] p-0.5">
+                    <button onclick="setCalendarView('month')" id="view-month" class="view-toggle-btn active">Mensal</button>
+                    <button onclick="setCalendarView('week')" id="view-week" class="view-toggle-btn">Semanal</button>
+                </div>
+            </div>
+
+            <!-- DRAG HINT -->
+            <div id="drag-hint" class="hidden mb-3 flex items-center justify-center gap-2 bg-[#fef8f8] border border-[#e41e26]/20 rounded-[12px] px-4 py-3 animate-pulse">
+                <i data-lucide="move" class="w-4 h-4 text-[#e41e26]"></i>
+                <span class="text-[11px] font-bold text-[#e41e26] uppercase tracking-[0.15em]">Solte em uma data para mover a tarefa</span>
+            </div>
+
+            <div class="cal-wrapper p-1.5 sm:p-3 lg:p-5 app-content opacity-0 translate-y-8">
+                <div id="weekday-headers" class="grid grid-cols-7 mb-1 sm:mb-2">
+                    <div class="cal-weekday weekend">D</div>
+                    <div class="cal-weekday">S</div>
+                    <div class="cal-weekday">T</div>
+                    <div class="cal-weekday">Q</div>
+                    <div class="cal-weekday">Q</div>
+                    <div class="cal-weekday">S</div>
+                    <div class="cal-weekday weekend">S</div>
+                </div>
+                <div id="calendar-grid" class="grid grid-cols-7 gap-[2px] sm:gap-[4px] lg:gap-1.5"></div>
+                <div id="weekly-grid" class="hidden"></div>
             </div>
         </main>
+
     </section>
 
-    <div id="task-modal" class="fixed inset-0 z-50 bg-slate-900/50 backdrop-blur-sm hidden opacity-0 flex items-end sm:items-center justify-center sm:p-4">
-        <div class="bottom-sheet bg-[#f8fafc] w-full sm:w-[500px] h-[90vh] sm:h-auto sm:max-h-[85vh] shadow-2xl flex flex-col overflow-hidden relative translate-y-[100%] sm:translate-y-10">
-            <div class="px-6 py-5 border-b border-slate-200 flex justify-between items-center bg-white sticky top-0 z-10 shadow-sm flex-shrink-0">
-                <div>
-                    <h3 id="modal-title" class="text-2xl font-display font-bold text-slate-900">Detalhes</h3>
-                    <p class="text-[10px] font-bold text-[#f40009] uppercase tracking-wide mt-0.5 flex items-center gap-1">
-                        <span class="w-2 h-2 rounded-full bg-[#f40009]"></span> Atividades do Dia
-                    </p>
-                </div>
-                <div class="flex items-center gap-2">
-                    <button id="btn-share-schedule" onclick="generateShareCard()" class="hidden w-10 h-10 bg-green-500 rounded-full flex items-center justify-center text-white hover:bg-green-600 shadow-md transition-colors" title="Compartilhar Escala">
-                        <i data-lucide="share-2" class="w-5 h-5"></i>
-                    </button>
-                    <button onclick="closeModal()" class="w-10 h-10 bg-slate-100 rounded-full flex items-center justify-center text-slate-500 hover:bg-slate-200 hover:text-slate-800 transition-colors">
-                        <i data-lucide="x" class="w-5 h-5"></i>
-                    </button>
-                </div>
-            </div>
+    <div id="task-modal" class="fixed inset-0 z-50 bg-[#151515]/50 backdrop-blur-sm hidden opacity-0 flex items-end sm:items-center justify-center sm:p-4">
+        <div class="bottom-sheet bg-[#fafafa] w-full sm:w-[520px] h-[92vh] sm:h-auto sm:max-h-[88vh] flex flex-col overflow-hidden relative translate-y-[100%] sm:translate-y-10">
 
-            <div id="admin-add-area" class="hidden bg-white px-6 py-4 border-b border-slate-200 shadow-sm flex-shrink-0 z-10">
-                <form onsubmit="addTask(event)" class="flex flex-col gap-4">
-                    <div class="flex flex-col gap-1.5">
-                        <label class="text-[10px] font-bold text-slate-500 uppercase tracking-wider pl-1">O que fazer?</label>
-                        <input id="input-title" type="text" placeholder="Ex: Limpeza do Salao" oninput="forceUppercase(this)" class="bg-slate-50 rounded-xl px-4 py-3 text-sm font-medium outline-none focus:ring-2 focus:ring-[#f40009]/20 focus:border-[#f40009] focus:bg-white transition-all border border-slate-200 placeholder-slate-400 text-slate-800">
-                    </div>
-                    
-                    <div class="flex gap-2 relative">
-                        <div class="flex-1 flex flex-col gap-1.5 relative group/search">
-                            <label class="text-[10px] font-bold text-slate-500 uppercase tracking-wider pl-1">Quem?</label>
-                            <div id="selected-collabs-container" class="flex flex-wrap gap-2 mb-1 empty:hidden"></div>
-                            <input id="input-resp" type="text" placeholder="Busque por nome..." autocomplete="off" oninput="forceUppercase(this)" class="bg-slate-50 rounded-xl px-4 py-3 text-sm font-medium outline-none focus:ring-2 focus:ring-[#f40009]/20 focus:border-[#f40009] focus:bg-white transition-all border border-slate-200 placeholder-slate-400 text-slate-800">
-                            <div id="resp-suggestions" class="absolute top-full left-0 w-full bg-white border border-slate-200 rounded-xl shadow-xl z-50 hidden max-h-48 overflow-y-auto mt-1 clean-scroll"></div>
+            <!-- HEADER DO MODAL -->
+            <div class="flex-shrink-0 sticky top-0 z-10">
+                <div class="px-6 pt-5 pb-4 bg-white relative overflow-hidden">
+                    <div class="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-[#e41e26] via-[#e41e26]/60 to-transparent"></div>
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <h3 id="modal-title" class="display-heading text-[22px] sm:text-2xl text-[#151515]" style="line-height:1.1">Detalhes</h3>
+                            <p class="text-[10px] font-bold text-[#e41e26] uppercase tracking-[0.22em] mt-2 flex items-center gap-2">
+                                <span class="w-[18px] h-[3px] rounded-full bg-[#e41e26]"></span> Atividades do Dia
+                            </p>
                         </div>
-                        <div class="flex items-end">
-                            <button type="submit" class="bg-[#f40009] text-white h-[46px] px-5 rounded-xl font-bold shadow-lg shadow-red-500/20 hover:bg-[#d00008] hover:scale-105 active:scale-95 transition-all flex items-center justify-center">
-                                <i data-lucide="plus" class="w-5 h-5"></i>
+                        <div class="flex items-center gap-2">
+                            <button id="btn-share-schedule" onclick="generateShareCard()" class="hidden w-10 h-10 bg-[#22c55e] rounded-[10px] flex items-center justify-center text-white hover:bg-[#15803d] shadow-lg shadow-green-500/20 transition-all hover:scale-105 active:scale-95" title="Compartilhar Escala">
+                                <i data-lucide="share-2" class="w-5 h-5"></i>
+                            </button>
+                            <button onclick="closeModal()" class="w-10 h-10 rounded-[10px] flex items-center justify-center text-[#94a3b8] hover:text-[#151515] hover:bg-[#fafafa] transition-all">
+                                <i data-lucide="x" class="w-5 h-5"></i>
                             </button>
                         </div>
                     </div>
+                </div>
+                <div class="h-px bg-gradient-to-r from-[#e5e7eb] via-[#e5e7eb] to-transparent"></div>
+            </div>
 
-                    <div class="flex flex-col gap-2">
-                        <label class="text-[10px] font-bold text-slate-500 uppercase tracking-wider pl-1">Repetir nos dias:</label>
-                        <div class="flex justify-between items-center bg-slate-50 p-2 rounded-xl border border-slate-200" id="week-selector">
-                            <button type="button" onclick="toggleDay(this)" data-day="0" class="day-toggle">D</button>
-                            <button type="button" onclick="toggleDay(this)" data-day="1" class="day-toggle">S</button>
-                            <button type="button" onclick="toggleDay(this)" data-day="2" class="day-toggle">T</button>
-                            <button type="button" onclick="toggleDay(this)" data-day="3" class="day-toggle">Q</button>
-                            <button type="button" onclick="toggleDay(this)" data-day="4" class="day-toggle">Q</button>
-                            <button type="button" onclick="toggleDay(this)" data-day="5" class="day-toggle">S</button>
-                            <button type="button" onclick="toggleDay(this)" data-day="6" class="day-toggle">S</button>
+            <!-- FORMULARIO ADICIONAR ATIVIDADE -->
+            <div id="admin-add-area" class="hidden flex-shrink-0 z-10">
+                <div class="mx-4 mt-4 mb-2 bg-white rounded-[14px] border border-[#e5e7eb] overflow-hidden" style="box-shadow: 0 10px 30px rgba(15,23,42,0.06)">
+                    <div class="px-5 pt-4 pb-3 flex items-center justify-between">
+                        <p class="text-[10px] font-extrabold text-[#e41e26] uppercase tracking-[0.22em] flex items-center gap-2">
+                            <i data-lucide="plus-circle" class="w-3.5 h-3.5"></i> Nova Atividade
+                        </p>
+                        <div class="flex items-center gap-1.5" id="step-dots">
+                            <span class="step-dot h-2 rounded-full transition-all duration-300" style="width:16px;background:#e41e26"></span>
+                            <span class="step-dot h-2 rounded-full transition-all duration-300" style="width:8px;background:rgba(228,30,38,0.2)"></span>
+                            <span class="step-dot h-2 rounded-full transition-all duration-300" style="width:8px;background:rgba(228,30,38,0.2)"></span>
                         </div>
                     </div>
-                </form>
+                    <form onsubmit="addTask(event)" class="px-5 pb-5">
+
+                        <!-- WIZARD STEP 1: Atividade -->
+                        <div id="wizard-step-1" class="wizard-step">
+                            <div class="flex gap-3.5">
+                                <div class="flex flex-col items-center">
+                                    <div class="w-7 h-7 rounded-full bg-[#e41e26] text-white text-[10px] font-black flex items-center justify-center flex-shrink-0 shadow-sm shadow-[#e41e26]/20">1</div>
+                                </div>
+                                <div class="flex-1">
+                                    <label class="text-[11px] font-extrabold text-[#151515] mb-1 block tracking-tight">Atividade</label>
+                                    <p class="text-[9px] text-[#9ca3af] mb-3">Descreva o que precisa ser feito</p>
+                                    <input id="input-title" type="text" placeholder="Ex: LIMPEZA DO SALAO" oninput="forceUppercase(this)" class="w-full bg-[#f8f8f8] rounded-[10px] px-4 py-3 text-[13px] font-bold outline-none focus:ring-2 focus:ring-[#e41e26]/10 focus:bg-white focus:border-[#e41e26] transition-all border border-[#e5e7eb] placeholder-[#cbd5e1] text-[#151515]">
+                                </div>
+                            </div>
+                            <div class="pt-4">
+                                <button type="button" onclick="goToStep(2)" class="ui-action-button relative overflow-hidden w-full py-3 bg-[#e41e26] hover:bg-[#c61a21] text-white rounded-xl font-extrabold text-[13px] tracking-wide active:scale-[0.97] transition-all flex items-center justify-center gap-2" style="box-shadow: 0 4px 14px rgba(228,30,38,0.25);">
+                                    Proximo <i data-lucide="arrow-right" class="w-4 h-4"></i>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- WIZARD STEP 2: Responsavel -->
+                        <div id="wizard-step-2" class="wizard-step hidden">
+                            <div class="flex gap-3.5">
+                                <div class="flex flex-col items-center">
+                                    <div class="w-7 h-7 rounded-full bg-[#e41e26] text-white text-[10px] font-black flex items-center justify-center flex-shrink-0 shadow-sm shadow-[#e41e26]/20">2</div>
+                                </div>
+                                <div class="flex-1">
+                                    <label class="text-[11px] font-extrabold text-[#151515] mb-1 block tracking-tight">Responsavel</label>
+                                    <p class="text-[9px] text-[#9ca3af] mb-3">Selecione quem vai executar a atividade</p>
+                                    <div id="selected-collabs-container" class="flex flex-wrap gap-1.5 empty:hidden mb-2"></div>
+                                    <div class="relative">
+                                        <i data-lucide="search" class="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-[#94a3b8] pointer-events-none z-10"></i>
+                                        <input id="input-resp" type="text" placeholder="Busque por nome..." autocomplete="off" oninput="forceUppercase(this)" class="w-full bg-[#f8f8f8] rounded-[10px] pl-10 pr-4 py-3 text-[13px] font-bold outline-none focus:ring-2 focus:ring-[#e41e26]/10 focus:bg-white focus:border-[#e41e26] transition-all border border-[#e5e7eb] placeholder-[#cbd5e1] text-[#151515]">
+                                        <div id="resp-suggestions" class="absolute top-full left-0 w-full bg-white border border-[#e5e7eb] rounded-[12px] z-50 hidden max-h-48 overflow-y-auto mt-1.5 clean-scroll" style="box-shadow: 0 20px 40px rgba(15,23,42,0.12)"></div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="pt-4 flex gap-3">
+                                <button type="button" onclick="goToStep(1)" class="flex-1 py-3 bg-[#fafafa] text-[#6b7280] font-extrabold text-[13px] rounded-xl hover:bg-[#e5e7eb] transition-all border border-[#e5e7eb] flex items-center justify-center gap-2">
+                                    <i data-lucide="arrow-left" class="w-4 h-4"></i> Voltar
+                                </button>
+                                <button type="button" onclick="goToStep(3)" class="flex-1 ui-action-button relative overflow-hidden py-3 bg-[#e41e26] hover:bg-[#c61a21] text-white rounded-xl font-extrabold text-[13px] tracking-wide active:scale-[0.97] transition-all flex items-center justify-center gap-2" style="box-shadow: 0 4px 14px rgba(228,30,38,0.25);">
+                                    Proximo <i data-lucide="arrow-right" class="w-4 h-4"></i>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- WIZARD STEP 3: Recorrencia -->
+                        <div id="wizard-step-3" class="wizard-step hidden">
+                            <div class="flex gap-3.5">
+                                <div class="flex flex-col items-center">
+                                    <div class="w-7 h-7 rounded-full bg-[#e41e26] text-white text-[10px] font-black flex items-center justify-center flex-shrink-0 shadow-sm shadow-[#e41e26]/20">3</div>
+                                </div>
+                                <div class="flex-1">
+                                    <label class="text-[11px] font-extrabold text-[#151515] mb-1 block tracking-tight">Repetir em outros dias?</label>
+                                    <p class="text-[9px] text-[#9ca3af] mb-3">Opcional — pule este passo se for somente para hoje</p>
+                                    <div class="bg-[#f8f8f8] p-2 rounded-[12px] border border-[#e5e7eb]" id="week-selector">
+                                        <div class="grid grid-cols-7 gap-1">
+                                            <button type="button" onclick="toggleDay(this)" data-day="0" class="day-toggle flex flex-col items-center gap-0.5 !rounded-lg !h-auto !w-auto py-1.5 px-0">
+                                                <span class="text-[10px] font-black">D</span>
+                                                <span class="text-[7px] font-bold opacity-50">DOM</span>
+                                            </button>
+                                            <button type="button" onclick="toggleDay(this)" data-day="1" class="day-toggle flex flex-col items-center gap-0.5 !rounded-lg !h-auto !w-auto py-1.5 px-0">
+                                                <span class="text-[10px] font-black">S</span>
+                                                <span class="text-[7px] font-bold opacity-50">SEG</span>
+                                            </button>
+                                            <button type="button" onclick="toggleDay(this)" data-day="2" class="day-toggle flex flex-col items-center gap-0.5 !rounded-lg !h-auto !w-auto py-1.5 px-0">
+                                                <span class="text-[10px] font-black">T</span>
+                                                <span class="text-[7px] font-bold opacity-50">TER</span>
+                                            </button>
+                                            <button type="button" onclick="toggleDay(this)" data-day="3" class="day-toggle flex flex-col items-center gap-0.5 !rounded-lg !h-auto !w-auto py-1.5 px-0">
+                                                <span class="text-[10px] font-black">Q</span>
+                                                <span class="text-[7px] font-bold opacity-50">QUA</span>
+                                            </button>
+                                            <button type="button" onclick="toggleDay(this)" data-day="4" class="day-toggle flex flex-col items-center gap-0.5 !rounded-lg !h-auto !w-auto py-1.5 px-0">
+                                                <span class="text-[10px] font-black">Q</span>
+                                                <span class="text-[7px] font-bold opacity-50">QUI</span>
+                                            </button>
+                                            <button type="button" onclick="toggleDay(this)" data-day="5" class="day-toggle flex flex-col items-center gap-0.5 !rounded-lg !h-auto !w-auto py-1.5 px-0">
+                                                <span class="text-[10px] font-black">S</span>
+                                                <span class="text-[7px] font-bold opacity-50">SEX</span>
+                                            </button>
+                                            <button type="button" onclick="toggleDay(this)" data-day="6" class="day-toggle flex flex-col items-center gap-0.5 !rounded-lg !h-auto !w-auto py-1.5 px-0">
+                                                <span class="text-[10px] font-black">S</span>
+                                                <span class="text-[7px] font-bold opacity-50">SAB</span>
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <div class="mt-3 bg-[#fffbeb] border border-[#fbbf24]/20 rounded-[10px] px-3.5 py-3">
+                                        <div class="flex items-start gap-2">
+                                            <i data-lucide="alert-triangle" class="w-4 h-4 text-[#f59e0b] flex-shrink-0 mt-0.5"></i>
+                                            <div>
+                                                <p class="text-[10px] font-extrabold text-[#92400e] mb-1">Atenção!</p>
+                                                <p class="text-[9px] font-bold text-[#92400e] leading-relaxed">Se você <strong>não marcar nenhum dia</strong>, a atividade será criada <strong>somente no dia <span id="wizard-selected-date" class="underline">--/--</span></strong>.</p>
+                                                <p class="text-[9px] font-bold text-[#b45309] leading-relaxed mt-1">Se marcar algum dia, a atividade será <strong>repetida toda semana</strong> nos dias escolhidos <strong>até o final do ano</strong>.</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="pt-4 flex gap-3">
+                                <button type="button" onclick="goToStep(2)" class="flex-1 py-3 bg-[#fafafa] text-[#6b7280] font-extrabold text-[13px] rounded-xl hover:bg-[#e5e7eb] transition-all border border-[#e5e7eb] flex items-center justify-center gap-2">
+                                    <i data-lucide="arrow-left" class="w-4 h-4"></i> Voltar
+                                </button>
+                                <button type="submit" class="flex-1 ui-action-button relative overflow-hidden py-3 bg-[#e41e26] hover:bg-[#c61a21] text-white rounded-xl font-extrabold text-[13px] tracking-wide active:scale-[0.97] transition-all flex items-center justify-center gap-2" style="box-shadow: 0 4px 14px rgba(228,30,38,0.25);">
+                                    <i data-lucide="check" class="w-4 h-4"></i> Adicionar
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
             </div>
 
-            <div class="flex-1 overflow-y-auto p-6 space-y-5 bg-slate-100/50 clean-scroll">
-                <div id="empty-state" class="hidden flex-col items-center justify-center py-12 text-center opacity-0 scale-90">
-                    <p class="text-xs text-slate-400 font-bold uppercase tracking-wider">Nenhuma atividade agendada.</p>
+            <!-- LISTA DE ATIVIDADES -->
+            <div class="flex-1 overflow-y-auto px-4 py-4 clean-scroll">
+                <div id="empty-state" class="hidden flex-col items-center justify-center py-16 text-center opacity-0 scale-90">
+                    <div class="w-14 h-14 rounded-full bg-[#fafafa] border border-[#e5e7eb] flex items-center justify-center mb-4 text-[#cbd5e1]">
+                        <i data-lucide="calendar-x" class="w-6 h-6"></i>
+                    </div>
+                    <p class="text-[11px] text-[#94a3b8] font-bold uppercase tracking-[0.18em]">Nenhuma atividade agendada</p>
                 </div>
-                <div id="task-list" class="space-y-3 pb-10" ondragover="event.preventDefault()"></div>
+                <div id="task-list" class="space-y-3 pb-6" ondragover="event.preventDefault()"></div>
             </div>
         </div>
     </div>
 
-    <div id="team-modal" class="fixed inset-0 z-50 bg-slate-900/50 backdrop-blur-sm hidden opacity-0 flex items-end sm:items-center justify-center sm:p-4">
-        <div class="bottom-sheet bg-[#f8fafc] w-full sm:w-[500px] h-[90vh] sm:h-[80vh] shadow-2xl flex flex-col overflow-hidden relative translate-y-[100%] sm:translate-y-10">
-            <div class="px-6 py-5 border-b border-slate-200 flex justify-between items-center bg-white sticky top-0 z-10 shadow-sm">
-                <div>
-                    <h3 class="text-2xl font-display font-bold text-slate-900">Equipe</h3>
-                    <p class="text-[10px] font-bold text-blue-500 uppercase tracking-wide mt-0.5">Gerenciar Colaboradores</p>
+    <div id="team-modal" class="fixed inset-0 z-50 bg-[#151515]/50 backdrop-blur-sm hidden opacity-0 flex items-end sm:items-center justify-center sm:p-4">
+        <div class="bottom-sheet bg-[#fafafa] w-full sm:w-[520px] h-[92vh] sm:h-[82vh] flex flex-col overflow-hidden relative translate-y-[100%] sm:translate-y-10">
+            <!-- Header -->
+            <div class="flex-shrink-0 sticky top-0 z-10">
+                <div class="px-6 pt-5 pb-4 bg-white relative overflow-hidden">
+                    <div class="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-[#e41e26] via-[#e41e26]/60 to-transparent"></div>
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <h3 class="display-heading text-[22px] sm:text-2xl text-[#151515]" style="line-height:1.1">Equipe</h3>
+                            <p class="text-[10px] font-bold text-[#e41e26] uppercase tracking-[0.22em] mt-2 flex items-center gap-2">
+                                <span class="w-[18px] h-[3px] rounded-full bg-[#e41e26]"></span> Gerenciar Colaboradores
+                            </p>
+                        </div>
+                        <div class="flex gap-2">
+                            <button onclick="openUserForm()" class="ui-action-button relative overflow-hidden w-10 h-10 bg-[#e41e26] rounded-[10px] flex items-center justify-center text-white hover:bg-[#c61a21] shadow-lg shadow-[#e41e26]/20 transition-all hover:scale-105 active:scale-95" title="Novo Colaborador">
+                                <i data-lucide="plus" class="w-5 h-5"></i>
+                            </button>
+                            <button onclick="closeTeamModal()" class="w-10 h-10 rounded-[10px] flex items-center justify-center text-[#94a3b8] hover:text-[#151515] hover:bg-[#fafafa] transition-all">
+                                <i data-lucide="x" class="w-5 h-5"></i>
+                            </button>
+                        </div>
+                    </div>
                 </div>
-                <div class="flex gap-2">
-                    <button onclick="openUserForm()" class="w-10 h-10 bg-blue-500 rounded-full flex items-center justify-center text-white hover:bg-blue-600 shadow-md transition-colors">
-                        <i data-lucide="plus" class="w-5 h-5"></i>
-                    </button>
-                    <button onclick="closeTeamModal()" class="w-10 h-10 bg-slate-100 rounded-full flex items-center justify-center text-slate-500 hover:bg-slate-200 transition-colors">
-                        <i data-lucide="x" class="w-5 h-5"></i>
-                    </button>
+                <div class="h-px bg-gradient-to-r from-[#e5e7eb] via-[#e5e7eb] to-transparent"></div>
+            </div>
+            <!-- Busca -->
+            <div class="px-4 pt-3 pb-1 flex-shrink-0">
+                <div class="relative">
+                    <i data-lucide="search" class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#94a3b8] pointer-events-none z-10"></i>
+                    <input id="team-search" type="text" placeholder="Buscar colaborador..." oninput="filterTeamList(this.value)" class="w-full bg-[#fafafa] rounded-[10px] pl-10 pr-4 py-2.5 text-[13px] font-bold outline-none focus:ring-2 focus:ring-[#e41e26]/10 focus:bg-white focus:border-[#e41e26] transition-all border border-[#e5e7eb] placeholder-[#cbd5e1] text-[#151515]">
                 </div>
             </div>
-            <div id="team-list" class="flex-1 overflow-y-auto p-4 space-y-2 clean-scroll bg-slate-50"></div>
+            <!-- Lista -->
+            <div id="team-list" class="flex-1 overflow-y-auto px-4 py-3 space-y-2.5 clean-scroll"></div>
         </div>
     </div>
 
-    <div id="user-form-modal" class="fixed inset-0 z-[60] bg-slate-900/60 backdrop-blur-sm hidden opacity-0 flex items-center justify-center p-4">
-        <div class="bg-white w-full max-w-sm rounded-2xl shadow-2xl p-6 transform scale-90 transition-all duration-300 border border-slate-200 relative">
-            <button onclick="closeUserForm()" class="absolute top-4 right-4 text-slate-400 hover:text-slate-600"><i data-lucide="x" class="w-5 h-5"></i></button>
-            <h3 id="user-form-title" class="text-lg font-bold text-slate-900 mb-6 text-center">Colaborador</h3>
+    <div id="user-form-modal" class="fixed inset-0 z-[60] bg-[#151515]/60 backdrop-blur-sm hidden opacity-0 flex items-center justify-center p-4">
+        <div class="bg-white w-full max-w-sm rounded-[14px] p-6 transform scale-90 transition-all duration-300 border border-[#e5e7eb] relative" style="box-shadow: 0 28px 64px rgba(15,23,42,0.18)">
+            <button onclick="closeUserForm()" class="absolute top-4 right-4 text-[#94a3b8] hover:text-[#151515] transition-colors"><i data-lucide="x" class="w-5 h-5"></i></button>
+            <h3 id="user-form-title" class="text-lg font-black text-[#151515] mb-6 text-center tracking-tight">Colaborador</h3>
             <form onsubmit="saveUser(event)" class="flex flex-col gap-3">
                 <input type="hidden" id="user-original-matricula">
                 <div class="flex flex-col items-center mb-2">
                     <div class="relative w-24 h-24 mb-2 group">
-                        <img id="user-photo-preview" src="https://placehold.co/150?text=FOTO" class="w-full h-full rounded-full object-cover border-4 border-slate-100 shadow-sm bg-slate-50">
-                        <label for="user-photo-input" class="absolute bottom-0 right-0 bg-blue-500 text-white p-2 rounded-full cursor-pointer hover:bg-blue-600 shadow-md transition-transform active:scale-95">
+                        <img id="user-photo-preview" src="https://placehold.co/150?text=FOTO" class="w-full h-full rounded-full object-cover border-4 border-[#fafafa] shadow-sm bg-[#fafafa]">
+                        <label for="user-photo-input" class="absolute bottom-0 right-0 bg-[#e41e26] text-white p-2 rounded-full cursor-pointer hover:bg-[#c61a21] shadow-md transition-transform active:scale-95">
                             <i data-lucide="camera" class="w-4 h-4"></i>
                         </label>
                         <input type="file" id="user-photo-input" accept="image/*" class="hidden" onchange="handleUserPhoto(this)">
                     </div>
-                    <p class="text-[10px] text-slate-400 uppercase font-bold tracking-wider">Toque na camera</p>
+                    <p class="text-[10px] text-[#94a3b8] uppercase font-bold tracking-[0.18em]">Toque na câmera</p>
                 </div>
                 <div>
-                    <label class="text-[10px] font-bold text-slate-400 uppercase pl-1">Nome Completo</label>
-                    <input type="text" id="user-name" required oninput="forceUppercase(this)" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm outline-none focus:border-blue-500 font-bold text-slate-700">
+                    <label class="text-[10px] font-bold text-[#6b7280] uppercase tracking-[0.18em] pl-1">Nome Completo</label>
+                    <input type="text" id="user-name" required oninput="forceUppercase(this)" class="w-full bg-[#fafafa] border border-[#e5e7eb] rounded-[10px] px-4 py-3 text-sm outline-none focus:border-[#e41e26] focus:ring-2 focus:ring-[#e41e26]/10 font-bold text-[#151515] transition-all">
                 </div>
                 <div>
-                    <label class="text-[10px] font-bold text-slate-400 uppercase pl-1">Matricula (Login)</label>
-                    <input type="number" id="user-matricula" required class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm outline-none focus:border-blue-500 font-bold text-slate-700">
+                    <label class="text-[10px] font-bold text-[#6b7280] uppercase tracking-[0.18em] pl-1">Matrícula (Login)</label>
+                    <input type="number" id="user-matricula" required class="w-full bg-[#fafafa] border border-[#e5e7eb] rounded-[10px] px-4 py-3 text-sm outline-none focus:border-[#e41e26] focus:ring-2 focus:ring-[#e41e26]/10 font-bold text-[#151515] transition-all">
                 </div>
                 <div class="relative">
-                    <label class="text-[10px] font-bold text-slate-400 uppercase pl-1">PIN de Acesso (4+ digitos)</label>
-                    <input type="password" id="user-pin" inputmode="numeric" minlength="4" placeholder="DEIXE VAZIO PARA NAO ALTERAR" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 pr-10 text-sm outline-none focus:border-blue-500 font-bold text-slate-700">
-                    <button type="button" id="user-pin-toggle" onclick="togglePasswordField('user-pin', this)" class="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 transition-colors"><i data-lucide="eye" class="w-4 h-4"></i></button>
+                    <label class="text-[10px] font-bold text-[#6b7280] uppercase tracking-[0.18em] pl-1">PIN de Acesso (4+ dígitos)</label>
+                    <input type="password" id="user-pin" minlength="4" placeholder="DEIXE VAZIO PARA NÃO ALTERAR" class="w-full bg-[#fafafa] border border-[#e5e7eb] rounded-[10px] px-4 py-3 pr-10 text-sm outline-none focus:border-[#e41e26] focus:ring-2 focus:ring-[#e41e26]/10 font-bold text-[#151515] transition-all">
+                    <button type="button" id="user-pin-toggle" onclick="togglePasswordField('user-pin', this)" class="absolute right-3 top-1/2 -translate-y-1/2 text-[#94a3b8] hover:text-[#e41e26] transition-colors"><i data-lucide="eye" class="w-4 h-4"></i></button>
                 </div>
                 <div>
-                    <label class="text-[10px] font-bold text-slate-400 uppercase pl-1">Funcao / Cargo</label>
-                    <input type="text" id="user-role-desc" placeholder="EX: LIMPEZA" oninput="forceUppercase(this)" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm outline-none focus:border-blue-500">
+                    <label class="text-[10px] font-bold text-[#6b7280] uppercase tracking-[0.18em] pl-1">Função / Cargo</label>
+                    <input type="text" id="user-role-desc" placeholder="EX: LIMPEZA" oninput="forceUppercase(this)" class="w-full bg-[#fafafa] border border-[#e5e7eb] rounded-[10px] px-4 py-3 text-sm outline-none focus:border-[#e41e26] focus:ring-2 focus:ring-[#e41e26]/10 transition-all">
                 </div>
-                <div class="flex items-center justify-between bg-slate-50 p-3 rounded-xl border border-slate-200 mt-1">
-                    <span class="text-xs font-bold text-slate-600 uppercase">Acesso Ativo?</span>
+                <div class="flex items-center justify-between bg-[#fafafa] p-3.5 rounded-[12px] border border-[#e5e7eb] mt-1">
+                    <span class="text-xs font-bold text-[#151515] uppercase tracking-wider">Acesso Ativo?</span>
                     <label class="relative inline-flex items-center cursor-pointer">
                         <input type="checkbox" id="user-active" class="sr-only peer" checked>
-                        <div class="w-9 h-5 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-blue-500"></div>
+                        <div class="w-9 h-5 bg-[#e5e7eb] peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-[#22c55e]"></div>
                     </label>
                 </div>
-                <button type="submit" class="w-full py-3.5 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl shadow-lg mt-2 transition-colors uppercase tracking-wide">Salvar Dados</button>
+                <button type="submit" class="ui-action-button relative overflow-hidden w-full py-3.5 bg-[#e41e26] hover:bg-[#c61a21] text-white font-extrabold rounded-[10px] shadow-lg shadow-[#e41e26]/20 mt-2 transition-all uppercase tracking-wide active:scale-[0.97]">Salvar Dados</button>
             </form>
         </div>
     </div>
 
-    <div id="identity-modal" class="fixed inset-0 z-[60] bg-slate-900/60 backdrop-blur-sm hidden opacity-0 flex items-center justify-center p-4">
-        <div class="bg-white w-full max-w-sm rounded-2xl shadow-2xl p-6 transform scale-90 transition-all duration-300 border border-slate-200 relative">
-            <button onclick="closeIdentityModal()" class="absolute top-4 right-4 text-slate-400 hover:text-slate-600 p-1">
+    <div id="identity-modal" class="fixed inset-0 z-[60] bg-[#151515]/60 backdrop-blur-sm hidden opacity-0 flex items-center justify-center p-4">
+        <div class="bg-white w-full max-w-sm rounded-[14px] p-6 transform scale-90 transition-all duration-300 border border-[#e5e7eb] relative" style="box-shadow: 0 28px 64px rgba(15,23,42,0.18)">
+            <button onclick="closeIdentityModal()" class="absolute top-4 right-4 text-[#94a3b8] hover:text-[#151515] p-1 transition-colors">
                 <i data-lucide="x" class="w-5 h-5"></i>
             </button>
             <div class="text-center mb-6">
-                <div class="w-14 h-14 bg-blue-50 rounded-full flex items-center justify-center mb-3 mx-auto text-blue-600 ring-4 ring-blue-50">
+                <div class="w-14 h-14 bg-[#fef2f2] rounded-full flex items-center justify-center mb-3 mx-auto text-[#e41e26] ring-4 ring-[#fef2f2]">
                     <i data-lucide="user-check" class="w-7 h-7"></i>
                 </div>
-                <h3 class="text-lg font-bold text-slate-900">Identificacao Necessaria</h3>
-                <p class="text-xs text-slate-500 mt-1">Para garantir a seguranca, informe seus dados.</p>
+                <h3 class="text-lg font-black text-[#151515] tracking-tight">Identificação necessária</h3>
+                <p class="text-xs text-[#6b7280] mt-1">Para garantir a segurança, informe seus dados.</p>
             </div>
             <div class="space-y-3">
                 <div>
-                    <label class="text-[10px] font-bold text-slate-400 uppercase tracking-wider pl-1 mb-1 block">Nome Completo</label>
-                    <input id="id-name" type="text" placeholder="SEU NOME" oninput="forceUppercase(this)" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all">
+                    <label class="text-[10px] font-bold text-[#6b7280] uppercase tracking-[0.18em] pl-1 mb-1.5 block">Nome Completo</label>
+                    <input id="id-name" type="text" placeholder="SEU NOME" oninput="forceUppercase(this)" class="w-full bg-[#fafafa] border border-[#e5e7eb] rounded-[10px] px-4 py-3 text-sm outline-none focus:border-[#e41e26] focus:ring-2 focus:ring-[#e41e26]/10 transition-all">
                 </div>
                 <div>
-                    <label class="text-[10px] font-bold text-slate-400 uppercase tracking-wider pl-1 mb-1 block">Matricula</label>
-                    <input id="id-matricula" type="text" placeholder="00000" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all">
+                    <label class="text-[10px] font-bold text-[#6b7280] uppercase tracking-[0.18em] pl-1 mb-1.5 block">Matricula</label>
+                    <input id="id-matricula" type="text" placeholder="00000" class="w-full bg-[#fafafa] border border-[#e5e7eb] rounded-[10px] px-4 py-3 text-sm outline-none focus:border-[#e41e26] focus:ring-2 focus:ring-[#e41e26]/10 transition-all">
                 </div>
-                <button onclick="confirmIdentity()" class="w-full py-3.5 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl shadow-lg shadow-blue-500/30 transition-colors mt-2">Confirmar e Enviar</button>
+                <button onclick="confirmIdentity()" class="ui-action-button relative overflow-hidden w-full py-3.5 bg-[#e41e26] hover:bg-[#c61a21] text-white font-extrabold rounded-[10px] shadow-lg shadow-[#e41e26]/25 transition-all mt-2 active:scale-[0.97]">Confirmar e Enviar</button>
             </div>
         </div>
     </div>
 
-    <div id="delete-modal" class="fixed inset-0 z-[60] bg-slate-900/60 backdrop-blur-sm hidden opacity-0 flex items-center justify-center p-4">
-        <div class="bg-white w-full max-w-sm rounded-2xl shadow-2xl p-6 transform scale-90 transition-all duration-300 border border-slate-200">
-            <div class="w-14 h-14 bg-red-50 rounded-full flex items-center justify-center mb-4 mx-auto text-red-500 ring-4 ring-red-50">
-                <i data-lucide="trash-2" class="w-7 h-7"></i>
-            </div>
-            <h3 id="delete-modal-title" class="text-center text-lg font-bold text-slate-900">Excluir Item?</h3>
-            <p id="delete-modal-desc" class="text-center text-sm text-slate-500 mt-2 mb-6 px-4">Essa acao e irreversivel.</p>
-            <div id="delete-btns-single" class="flex gap-3">
-                <button onclick="closeDeleteModal()" class="flex-1 py-3 bg-slate-100 hover:bg-slate-200 text-slate-600 font-bold rounded-xl transition-colors">Cancelar</button>
-                <button onclick="confirmDelete(false)" class="flex-1 py-3 bg-red-500 hover:bg-red-600 text-white font-bold rounded-xl shadow-lg shadow-red-500/30 transition-colors">Sim, Excluir</button>
-            </div>
-            <div id="delete-btns-group" class="hidden flex flex-col gap-2">
-                <button onclick="confirmDelete(false)" class="w-full py-3 bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 font-bold rounded-xl transition-colors">Excluir Apenas Esta</button>
-                <button onclick="confirmDelete(true)" class="w-full py-3 bg-red-500 hover:bg-red-600 text-white font-bold rounded-xl shadow-lg shadow-red-500/30 transition-colors">Excluir Esta e Futuras</button>
-                <button onclick="closeDeleteModal()" class="w-full py-2 text-xs text-slate-400 font-bold hover:text-slate-600 uppercase tracking-wider mt-2">Cancelar</button>
+    <div id="delete-modal" class="fixed inset-0 z-[60] bg-[#151515]/60 backdrop-blur-sm hidden opacity-0 flex items-center justify-center p-4">
+        <div class="bg-white w-full max-w-sm rounded-[14px] overflow-hidden transform scale-90 transition-all duration-300 border border-[#e5e7eb]" style="box-shadow: 0 28px 64px rgba(15,23,42,0.18)">
+            <div class="h-1 bg-gradient-to-r from-[#ef4444] via-[#ef4444]/60 to-transparent"></div>
+            <div class="p-6">
+                <div class="w-14 h-14 bg-[#fef2f2] rounded-full flex items-center justify-center mb-4 mx-auto text-[#ef4444] ring-4 ring-[#fef2f2]">
+                    <i data-lucide="trash-2" class="w-7 h-7"></i>
+                </div>
+                <h3 id="delete-modal-title" class="text-center text-lg font-display font-black text-[#151515] tracking-tight">Excluir item?</h3>
+                <p id="delete-modal-desc" class="text-center text-sm text-[#6b7280] mt-2 mb-6 px-4">Essa ação é irreversível.</p>
+                <div id="delete-btns-single" class="flex gap-3">
+                    <button onclick="closeDeleteModal()" class="flex-1 py-3 bg-[#fafafa] hover:bg-[#e5e7eb] text-[#6b7280] font-extrabold text-[13px] rounded-[10px] transition-all border border-[#e5e7eb]">Cancelar</button>
+                    <button onclick="confirmDelete(false)" class="flex-1 ui-action-button relative overflow-hidden py-3 bg-[#ef4444] hover:bg-[#dc2626] text-white font-extrabold text-[13px] rounded-[10px] shadow-lg shadow-red-500/25 transition-all">Sim, excluir</button>
+                </div>
+                <div id="delete-btns-group" class="hidden flex flex-col gap-2">
+                    <button onclick="confirmDelete(false)" class="w-full py-3 bg-white border border-[#e5e7eb] hover:bg-[#fafafa] text-[#151515] font-extrabold text-[13px] rounded-[10px] transition-all">Excluir apenas esta</button>
+                    <button onclick="confirmDelete(true)" class="w-full ui-action-button relative overflow-hidden py-3 bg-[#ef4444] hover:bg-[#dc2626] text-white font-extrabold text-[13px] rounded-[10px] shadow-lg shadow-red-500/25 transition-all">Excluir esta e futuras</button>
+                    <button onclick="closeDeleteModal()" class="w-full py-2 text-[11px] text-[#94a3b8] font-bold hover:text-[#151515] uppercase tracking-[0.18em] mt-2 transition-colors">Cancelar</button>
+                </div>
             </div>
         </div>
     </div>
 
-    <div id="share-modal" class="fixed inset-0 z-[70] bg-slate-900/90 backdrop-blur-sm hidden opacity-0 flex items-center justify-center p-4">
-        <div class="bg-white w-full max-w-sm rounded-2xl shadow-2xl p-4 flex flex-col items-center">
-            <h3 class="text-lg font-bold text-slate-800 mb-4">Pre-visualizacao do Card</h3>
-            <div id="share-preview-container" class="w-full rounded-xl overflow-hidden shadow-sm border border-slate-200 mb-4 bg-slate-100 flex items-center justify-center min-h-[200px]">
-                <p class="text-xs text-slate-400">Gerando imagem...</p>
+    <div id="share-modal" class="fixed inset-0 z-[70] bg-[#151515]/60 backdrop-blur-sm hidden opacity-0 flex items-center justify-center p-4">
+        <div class="bg-white w-full max-w-sm rounded-[14px] overflow-hidden relative" style="box-shadow: 0 28px 64px rgba(15,23,42,0.18)">
+            <div class="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-[#e41e26] via-[#e41e26]/60 to-transparent"></div>
+            <div class="px-5 pt-5 pb-3 flex items-center justify-between">
+                <div>
+                    <h3 class="text-lg font-black text-[#151515] tracking-tight">Compartilhar Escala</h3>
+                    <p class="text-[10px] font-bold text-[#e41e26] uppercase tracking-[0.22em] mt-1 flex items-center gap-2">
+                        <span class="w-[18px] h-[3px] rounded-full bg-[#e41e26]"></span> Pré-visualização
+                    </p>
+                </div>
+                <button onclick="closeShareModal()" class="w-10 h-10 rounded-[10px] flex items-center justify-center text-[#94a3b8] hover:text-[#151515] hover:bg-[#fafafa] transition-all">
+                    <i data-lucide="x" class="w-5 h-5"></i>
+                </button>
             </div>
-            <div class="grid grid-cols-2 gap-3 w-full">
-                <button onclick="closeShareModal()" class="py-3 bg-slate-100 text-slate-600 font-bold rounded-xl hover:bg-slate-200 transition-colors">Voltar</button>
-                <button id="copy-btn" onclick="copyImageToClipboard()" class="py-3 bg-green-500 text-white font-bold rounded-xl hover:bg-green-600 shadow-lg shadow-green-500/20 transition-colors flex items-center justify-center gap-2"><i data-lucide="copy" class="w-4 h-4"></i> Copiar</button>
+            <div class="px-5 pb-5">
+                <div id="share-preview-container" class="w-full rounded-[12px] overflow-hidden border border-[#e5e7eb] mb-4 bg-[#fafafa] flex items-center justify-center min-h-[200px]">
+                    <div class="flex flex-col items-center gap-3">
+                        <div class="w-8 h-8 border-[3px] border-[#e5e7eb] border-t-[#e41e26] rounded-full animate-spin"></div>
+                        <p class="text-[10px] text-[#94a3b8] font-bold uppercase tracking-[0.18em]">Gerando imagem...</p>
+                    </div>
+                </div>
+                <div class="grid grid-cols-2 gap-3 w-full">
+                    <button onclick="closeShareModal()" class="py-3 bg-[#fafafa] text-[#6b7280] font-extrabold text-[13px] rounded-[10px] hover:bg-[#e5e7eb] transition-all border border-[#e5e7eb]">Voltar</button>
+                    <button id="copy-btn" onclick="copyImageToClipboard()" class="ui-action-button relative overflow-hidden py-3 bg-[#e41e26] text-white font-extrabold text-[13px] rounded-[10px] hover:bg-[#c61a21] transition-all flex items-center justify-center gap-2" style="box-shadow: 0 4px 14px rgba(228,30,38,0.25);">
+                        <i data-lucide="copy" class="w-4 h-4"></i> Copiar
+                    </button>
+                </div>
+                <p class="text-[10px] text-[#94a3b8] mt-3 text-center font-bold uppercase tracking-[0.15em]">No celular: Segure a imagem para salvar</p>
             </div>
-            <p class="text-[10px] text-slate-400 mt-3 text-center">No celular: Segure a imagem para salvar e enviar.</p>
         </div>
     </div>
 
@@ -345,114 +553,106 @@
         <button class="absolute top-4 right-4 text-white p-2 bg-white/10 rounded-full hover:bg-white/20 transition-colors">
             <i data-lucide="x" class="w-6 h-6"></i>
         </button>
-        <img id="full-image" src="" class="max-w-full max-h-[90vh] object-contain rounded-lg shadow-2xl scale-95 transition-transform duration-300">
+        <img id="full-image" src="" class="max-w-full max-h-[90vh] object-contain rounded-[14px] shadow-2xl scale-95 transition-transform duration-300">
     </div>
 
-    <div id="pwa-install-toast" class="fixed bottom-6 left-4 right-4 z-[80] bg-white p-4 rounded-2xl shadow-2xl border border-slate-100 flex items-center justify-between transform translate-y-[150%] transition-transform duration-500">
+    <div id="pwa-install-toast" class="fixed bottom-4 right-4 left-auto z-[80] bg-white p-3 sm:p-4 rounded-[12px] sm:rounded-[14px] border border-[#e5e7eb] flex items-center justify-between transform translate-y-[150%] transition-transform duration-500 max-w-[360px] w-[calc(100%-2rem)] sm:w-auto" style="box-shadow: 0 28px 64px rgba(15,23,42,0.18)">
         <div class="flex items-center gap-3">
-            <div class="w-12 h-12 bg-slate-50 rounded-xl p-1 shadow-sm border border-slate-100 shrink-0">
-                <img src="https://i.postimg.cc/nrCMQ8mx/logo-calendario.jpg" class="w-full h-full object-contain" onerror="this.src='https://placehold.co/100x100?text=App'">
+            <div class="w-12 h-12 bg-[#fafafa] rounded-[12px] p-1 shadow-sm border border-[#e5e7eb] shrink-0">
+                <img src="https://i.postimg.cc/c4LqxjXc/capa-calendario-nova.png" class="w-full h-full object-contain" onerror="this.src='https://placehold.co/100x100?text=App'">
             </div>
             <div>
-                <h4 class="font-bold text-slate-900 text-sm leading-tight">Calendario Limpeza</h4>
-                <p class="text-[10px] text-slate-500 font-medium">Instalar aplicativo</p>
+                <h4 class="font-black text-[#151515] text-sm leading-tight tracking-tight">Calendario DPA</h4>
+                <p class="text-[10px] text-[#6b7280] font-bold">Instalar aplicativo</p>
             </div>
         </div>
         <div class="flex items-center gap-2">
-            <button id="pwa-install-trigger" class="bg-[#f40009] text-white text-xs font-bold px-4 py-2.5 rounded-xl shadow-lg shadow-red-500/20 active:scale-95 transition-transform whitespace-nowrap">Adicionar</button>
-            <button onclick="dismissInstall()" class="bg-slate-100 text-slate-400 rounded-full p-1.5 hover:bg-slate-200 hover:text-slate-600 transition-colors"><i data-lucide="x" class="w-4 h-4"></i></button>
+            <button id="pwa-install-trigger" class="ui-action-button relative overflow-hidden bg-[#e41e26] text-white text-xs font-extrabold px-5 py-2.5 rounded-[10px] shadow-lg shadow-[#e41e26]/25 active:scale-95 transition-transform whitespace-nowrap">Adicionar</button>
+            <button onclick="dismissInstall()" class="bg-[#fafafa] text-[#94a3b8] rounded-full p-1.5 hover:bg-[#e5e7eb] hover:text-[#151515] transition-colors"><i data-lucide="x" class="w-4 h-4"></i></button>
         </div>
     </div>
 
-    <div id="ios-install-modal" class="fixed inset-0 z-[90] bg-slate-900/80 backdrop-blur-sm hidden opacity-0 flex items-end sm:items-center justify-center p-4">
-        <div class="bg-white w-full max-w-sm rounded-2xl shadow-2xl p-6 relative">
-            <button onclick="closeIosModal()" class="absolute top-4 right-4 text-slate-400 hover:text-slate-600"><i data-lucide="x" class="w-5 h-5"></i></button>
+    <div id="ios-install-modal" class="fixed inset-0 z-[90] bg-[#151515]/80 backdrop-blur-sm hidden opacity-0 flex items-end sm:items-center justify-center p-4">
+        <div class="bg-white w-full max-w-sm rounded-[14px] p-6 relative" style="box-shadow: 0 28px 64px rgba(15,23,42,0.18)">
+            <button onclick="closeIosModal()" class="absolute top-4 right-4 text-[#94a3b8] hover:text-[#151515] transition-colors"><i data-lucide="x" class="w-5 h-5"></i></button>
             <div class="text-center">
-                <div class="w-16 h-16 bg-slate-50 rounded-2xl mx-auto mb-4 p-2 shadow-sm border border-slate-100">
-                    <img src="https://i.postimg.cc/nrCMQ8mx/logo-calendario.jpg" class="w-full h-full object-contain">
+                <div class="w-16 h-16 bg-[#fafafa] rounded-[14px] mx-auto mb-4 p-2 shadow-sm border border-[#e5e7eb]">
+                    <img src="https://i.postimg.cc/c4LqxjXc/capa-calendario-nova.png" class="w-full h-full object-contain">
                 </div>
-                <h3 class="text-lg font-bold text-slate-900">Instalar no iPhone</h3>
-                <p class="text-sm text-slate-500 mt-2 mb-6">Siga os passos abaixo para adicionar a tela de inicio:</p>
+                <h3 class="text-lg font-black text-[#151515] tracking-tight">Instalar no iPhone</h3>
+                <p class="text-sm text-[#6b7280] mt-2 mb-6">Siga os passos abaixo para adicionar à tela de início:</p>
                 <div class="space-y-4 text-left">
-                    <div class="flex items-center gap-3 p-3 bg-slate-50 rounded-xl border border-slate-100">
-                        <div class="w-8 h-8 bg-white rounded-full flex items-center justify-center text-blue-500 font-bold shadow-sm">1</div>
-                        <span class="text-sm text-slate-600 font-medium">Toque no botao <span class="font-bold text-blue-500">Compartilhar</span> <i data-lucide="share" class="w-3 h-3 inline"></i></span>
+                    <div class="flex items-center gap-3 p-3.5 bg-[#fafafa] rounded-[12px] border border-[#e5e7eb]">
+                        <div class="w-8 h-8 bg-white rounded-full flex items-center justify-center text-[#e41e26] font-black shadow-sm border border-[#e5e7eb]">1</div>
+                        <span class="text-sm text-[#151515] font-semibold">Toque no botao <span class="font-bold text-[#e41e26]">Compartilhar</span> <i data-lucide="share" class="w-3 h-3 inline"></i></span>
                     </div>
-                    <div class="flex items-center gap-3 p-3 bg-slate-50 rounded-xl border border-slate-100">
-                        <div class="w-8 h-8 bg-white rounded-full flex items-center justify-center text-slate-700 font-bold shadow-sm">2</div>
-                        <span class="text-sm text-slate-600 font-medium">Selecione <span class="font-bold text-slate-800">Adicionar a Tela de Inicio</span></span>
+                    <div class="flex items-center gap-3 p-3.5 bg-[#fafafa] rounded-[12px] border border-[#e5e7eb]">
+                        <div class="w-8 h-8 bg-white rounded-full flex items-center justify-center text-[#e41e26] font-black shadow-sm border border-[#e5e7eb]">2</div>
+                        <span class="text-sm text-[#151515] font-semibold">Selecione <span class="font-bold text-[#151515]">Adicionar à Tela de Início</span></span>
                     </div>
                 </div>
             </div>
-            <div class="absolute bottom-[-10px] left-1/2 -translate-x-1/2 translate-y-full w-4 h-4 bg-white rotate-45"></div>
         </div>
     </div>
 
-    <div id="share-card-template" class="absolute top-0 left-[-9999px] z-[-50] bg-slate-50 w-[420px] font-sans overflow-hidden">
-        <div class="bg-gradient-to-r from-slate-900 to-slate-800 p-8 text-white relative overflow-hidden">
+    <div id="share-card-template" class="absolute top-0 left-[-9999px] z-[-50] bg-[#fafafa] w-[420px] overflow-hidden" style="font-family:'Barlow',sans-serif">
+        <div class="bg-gradient-to-r from-[#151515] to-[#1c1c1c] p-8 text-white relative overflow-hidden">
             <div class="absolute top-0 right-0 w-32 h-32 bg-white/5 rounded-full blur-2xl -translate-y-1/2 translate-x-1/4"></div>
-            <div class="absolute bottom-0 left-0 w-20 h-20 bg-[#f40009]/20 rounded-full blur-xl translate-y-1/3 -translate-x-1/4"></div>
+            <div class="absolute bottom-0 left-0 w-20 h-20 bg-[#e41e26]/20 rounded-full blur-xl translate-y-1/3 -translate-x-1/4"></div>
             <div class="flex justify-between items-start relative z-10">
                 <div class="flex items-center gap-4">
-                    <div class="w-14 h-14 bg-white rounded-2xl shadow-lg p-1.5 flex items-center justify-center">
-                        <img src="https://i.postimg.cc/nrCMQ8mx/logo-calendario.jpg" class="w-full h-full object-contain" onerror="this.src='https://placehold.co/100x100?text=LOGO'">
+                    <div class="w-14 h-14 bg-white rounded-[14px] shadow-lg p-1.5 flex items-center justify-center">
+                        <img src="https://i.postimg.cc/c4LqxjXc/capa-calendario-nova.png" class="w-full h-full object-contain" onerror="this.src='https://placehold.co/100x100?text=LOGO'">
                     </div>
                     <div>
-                        <h1 class="text-2xl font-display font-black leading-none tracking-tight">Escala<span class="text-[#f40009]">Limpeza</span></h1>
-                        <p id="card-subtitle" class="text-xs font-medium text-slate-300 mt-1 uppercase tracking-wider flex items-center gap-1.5">
-                            <span class="w-1.5 h-1.5 rounded-full bg-[#f40009]"></span>
-                            Programacao - Terca-Feira
+                        <h1 class="text-2xl font-display font-black leading-none tracking-tight">Escala<span class="text-[#e41e26]">DPA</span></h1>
+                        <p id="card-subtitle" class="text-xs font-semibold text-gray-300 mt-1 uppercase tracking-[0.18em] flex items-center gap-1.5">
+                            <span class="w-1.5 h-1.5 rounded-full bg-[#e41e26]"></span>
+                            Programação - Terça-Feira
                         </p>
                     </div>
                 </div>
-                <div class="text-right bg-white/10 backdrop-blur-md rounded-xl px-4 py-2 border border-white/10">
+                <div class="text-right bg-white/10 backdrop-blur-md rounded-[12px] px-4 py-2 border border-white/10">
                     <span id="card-date-day" class="block text-3xl font-black leading-none">25</span>
-                    <span id="card-date-month" class="block text-[10px] font-bold uppercase tracking-widest text-slate-300">JAN</span>
+                    <span id="card-date-month" class="block text-[10px] font-bold uppercase tracking-[0.22em] text-gray-300">JAN</span>
                 </div>
             </div>
         </div>
-        <div class="p-8 bg-[#f8fafc]">
+        <div class="p-8 bg-[#fafafa]">
             <div class="space-y-4 min-h-[150px]" id="card-task-list"></div>
-            <div class="mt-8 pt-6 border-t border-slate-200 flex justify-between items-center opacity-60">
+            <div class="mt-8 pt-6 border-t border-[#e5e7eb] flex justify-between items-center opacity-60">
                 <div class="flex items-center gap-2">
-                    <div class="w-6 h-6 bg-slate-200 rounded-full flex items-center justify-center text-slate-400">
+                    <div class="w-6 h-6 bg-[#e5e7eb] rounded-full flex items-center justify-center text-[#94a3b8]">
                         <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
                     </div>
-                    <span class="text-[10px] font-bold uppercase tracking-wider text-slate-500">Gestao Administrativa</span>
+                    <span class="text-[10px] font-bold uppercase tracking-[0.18em] text-[#6b7280]">Gestão Administrativa</span>
                 </div>
                 <div class="flex items-center gap-1.5">
-                    <div class="w-2 h-2 rounded-full bg-green-500 shadow-[0_0_8px_rgba(34,197,94,0.6)]"></div>
-                    <span class="text-[10px] font-bold text-slate-500 uppercase tracking-wider">Confirmado</span>
+                    <span class="live-dot"></span>
+                    <span class="text-[10px] font-bold text-[#6b7280] uppercase tracking-[0.18em]">Confirmado</span>
                 </div>
             </div>
         </div>
-        <div class="h-2 w-full bg-gradient-to-r from-[#f40009] via-slate-800 to-slate-900"></div>
+        <div class="h-2 w-full bg-gradient-to-r from-[#e41e26] via-[#151515] to-[#1c1c1c]"></div>
     </div>
 
-    <div id="custom-alert-modal" class="fixed inset-0 z-[100] bg-slate-900/60 backdrop-blur-sm hidden opacity-0 flex items-center justify-center p-4 transition-all duration-300">
-        <div class="bg-white w-full max-w-sm rounded-2xl shadow-2xl p-6 transform scale-90 transition-all duration-300 border border-slate-200 text-center relative">
-            <div id="alert-icon-container" class="w-16 h-16 bg-red-50 rounded-full flex items-center justify-center mb-4 mx-auto text-[#f40009] ring-4 ring-red-50 transition-colors">
-                <i id="alert-icon" data-lucide="alert-triangle" class="w-8 h-8"></i>
+    <div id="custom-alert-modal" class="fixed inset-0 z-[100] bg-[#151515]/60 backdrop-blur-sm hidden opacity-0 flex items-center justify-center p-4 transition-all duration-300">
+        <div class="bg-white w-full max-w-sm rounded-[14px] overflow-hidden transform scale-90 transition-all duration-300 border border-[#e5e7eb] text-center relative" style="box-shadow: 0 28px 64px rgba(15,23,42,0.18)">
+            <div id="alert-top-bar" class="h-1 bg-gradient-to-r from-[#e41e26] via-[#e41e26]/60 to-transparent"></div>
+            <div class="p-6">
+                <div id="alert-icon-container" class="w-16 h-16 rounded-full flex items-center justify-center mb-4 mx-auto ring-4 transition-colors">
+                    <i id="alert-icon" data-lucide="alert-triangle" class="w-8 h-8"></i>
+                </div>
+                <h3 id="alert-title" class="text-xl font-display font-black text-[#151515] mb-2 tracking-tight">Atenção</h3>
+                <p id="custom-alert-message" class="text-sm text-[#6b7280] mb-6 px-2 leading-relaxed">
+                    Mensagem aqui.
+                </p>
+                <button id="alert-btn" onclick="closeCustomAlert()" class="ui-action-button relative overflow-hidden w-full py-3.5 text-white font-extrabold text-[13px] rounded-[10px] shadow-lg active:scale-[0.97] transition-all uppercase tracking-wide">
+                    Entendi
+                </button>
             </div>
-            <h3 id="alert-title" class="text-xl font-display font-bold text-slate-900 mb-2">Atencao</h3>
-            <p id="custom-alert-message" class="text-sm text-slate-500 mb-6 px-2 leading-relaxed">
-                Mensagem de erro aqui.
-            </p>
-            <button id="alert-btn" onclick="closeCustomAlert()" class="w-full py-3.5 bg-[#f40009] hover:bg-[#d00008] text-white font-bold rounded-xl shadow-lg shadow-red-500/20 active:scale-95 transition-all">
-                Entendi, fechar
-            </button>
         </div>
     </div>
     <script type="module" src="/js/app.js"></script>
 </body>
 </html>
-
-
-
-
-
-
-
-
-
-

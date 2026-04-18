@@ -1,0 +1,243 @@
+/*
+ * ============================================
+ *  AVALIA AI — Design Tokens
+ *  Identidade Visual Completa
+ * ============================================
+ *
+ *  Como usar:
+ *  1. Importe este arquivo no CSS principal do novo projeto:
+ *     @import "./design-tokens.css";
+ *  2. Use as variaveis CSS com var(--nome-da-variavel)
+ *  3. Use as classes utilitarias diretamente no HTML/JSX
+ */
+
+/* ─── Google Fonts ─── */
+@import url("https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600;700;800;900&family=Archivo+Black&display=swap");
+
+/* ─── Design Tokens (CSS Custom Properties) ─── */
+:root {
+  /* ── Cores da Marca ── */
+  --brand-red: #e41e26;
+  --brand-red-dark: #c61a21;
+  --brand-red-alt: #dc2626;
+
+  /* ── Cores Neutras ── */
+  --ink-900: #151515;
+  --ink-800: #1c1c1c;
+  --surface: #ffffff;
+  --surface-alt: #fafafa;
+  --background: #fcfcfc;
+  --line: #e5e7eb;
+  --gray-500: #6b7280;
+  --gray-400: #94a3b8;
+  --gray-300: #cbd5e1;
+  --skeleton-bg: #f1f3f5;
+
+  /* ── Cores Semanticas ── */
+  --color-success: #22c55e;
+  --color-success-dark: #15803d;
+  --color-success-alt: #10b981;
+  --color-warning: #f59e0b;
+  --color-warning-dark: #b45309;
+  --color-warning-alt: #f2bf10;
+  --color-error: #ef4444;
+  --color-error-dark: #b91c1c;
+  --color-error-light: #fecaca;
+  --color-error-bg: #fef2f2;
+
+  /* ── Tipografia ── */
+  --font-body: "Barlow", "Segoe UI", "Tahoma", sans-serif;
+  --font-display: "Archivo Black", "Barlow", sans-serif;
+
+  /* ── Border Radius ── */
+  --radius-panel: 14px;
+  --radius-tile: 12px;
+  --radius-button: 10px;
+  --radius-full: 9999px;
+
+  /* ── Sombras ── */
+  --shadow-card: 0 10px 30px rgba(15, 23, 42, 0.08);
+  --shadow-card-hover: 0 14px 28px rgba(15, 23, 42, 0.1);
+  --shadow-card-brand: 0 8px 20px rgba(216, 25, 32, 0.12);
+  --shadow-logo-hover: 0 8px 22px -8px rgba(228, 30, 38, 0.22);
+  --shadow-modal: 0 28px 64px rgba(15, 23, 42, 0.18);
+  --shadow-button-active: 0 18px 34px rgba(15, 23, 42, 0.18);
+  --shadow-error: 0 12px 32px -10px rgba(239, 68, 68, 0.18);
+
+  /* ── Safe Areas (Mobile) ── */
+  --safe-area-top: env(safe-area-inset-top, 0px);
+  --safe-area-bottom: env(safe-area-inset-bottom, 0px);
+
+  /* ── Motion / Animacoes ── */
+  --motion-fast: 180ms;
+  --motion-base: 260ms;
+  --motion-slow: 360ms;
+  --motion-ease-out: cubic-bezier(.22, .78, .24, 1);
+  --motion-ease-in: cubic-bezier(.4, 0, .2, 1);
+  --motion-ease-snap: cubic-bezier(.2, 1, .36, 1);
+
+  /* ── Glassmorphism ── */
+  --glass-bg: rgba(255, 255, 255, 0.78);
+  --glass-blur: saturate(180%) blur(24px);
+  --glass-border: 1px solid rgba(15, 23, 42, 0.06);
+
+  /* ── Grid Background (Dot Pattern) ── */
+  --grid-dot-color: rgba(15, 23, 42, 0.06);
+  --grid-dot-size: 28px;
+
+  /* ── Brand Gradients ── */
+  --gradient-brand-glow: radial-gradient(circle at top left, rgba(228, 30, 38, 0.1) 0%, rgba(228, 30, 38, 0) 34%);
+  --gradient-card-surface: linear-gradient(180deg, rgba(255, 255, 255, 0.99) 0%, rgba(248, 250, 252, 0.97) 100%);
+}
+
+/* ─── Tipografia Base ─── */
+
+/* Titulo display grande (ex: headings hero) */
+.display-heading {
+  font-family: var(--font-display);
+  font-weight: 900;
+  letter-spacing: -0.025em;
+  line-height: 0.92;
+  text-transform: uppercase;
+}
+
+/* Eyebrow / Label acima de titulos */
+.accent-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.75rem;
+  font-family: var(--font-body);
+  font-weight: 700;
+  font-size: 0.75rem;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--gray-500);
+}
+
+.accent-eyebrow::before {
+  content: "";
+  width: 2.25rem;
+  height: 3px;
+  background: var(--brand-red);
+  border-radius: 2px;
+}
+
+/* ─── Keyframe Animations ─── */
+
+@keyframes riseIn {
+  from { opacity: 0; transform: translateY(14px) scale(0.99); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+@keyframes screenIn {
+  from { opacity: 0; transform: translateY(8px) scale(0.996); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+@keyframes stepInRight {
+  from { opacity: 0; transform: translate3d(26px, 0, 0) scale(0.985); }
+  to { opacity: 1; transform: translate3d(0, 0, 0) scale(1); }
+}
+
+@keyframes stepInLeft {
+  from { opacity: 0; transform: translate3d(-26px, 0, 0) scale(0.985); }
+  to { opacity: 1; transform: translate3d(0, 0, 0) scale(1); }
+}
+
+@keyframes stepOutLeft {
+  from { opacity: 1; transform: translate3d(0, 0, 0) scale(1); }
+  to { opacity: 0; transform: translate3d(-30px, 0, 0) scale(0.985); }
+}
+
+@keyframes stepOutRight {
+  from { opacity: 1; transform: translate3d(0, 0, 0) scale(1); }
+  to { opacity: 0; transform: translate3d(30px, 0, 0) scale(0.985); }
+}
+
+@keyframes badgeIn {
+  from { opacity: 0; transform: translateY(8px) scale(0.94); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+@keyframes listItemIn {
+  from { opacity: 0; transform: translateY(10px) scale(0.98); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+@keyframes sharedPop {
+  0% { transform: scale(0.88); filter: saturate(0.75); }
+  60% { transform: scale(1.06); filter: saturate(1.05); }
+  100% { transform: scale(1); filter: saturate(1); }
+}
+
+@keyframes scoreFacePop {
+  0% { opacity: 0.6; transform: scale(0.86) rotate(-8deg); }
+  60% { opacity: 1; transform: scale(1.06) rotate(3deg); }
+  100% { opacity: 1; transform: scale(1) rotate(0deg); }
+}
+
+@keyframes scoreValuePop {
+  0% { opacity: 0.4; transform: translateY(8px) scale(0.9); }
+  60% { opacity: 1; transform: translateY(-2px) scale(1.06); }
+  100% { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+@keyframes confettiFloat {
+  0% { opacity: 0; transform: translate3d(0, 12px, 0) scale(0.82) rotate(0deg); }
+  18% { opacity: 1; }
+  50% { transform: translate3d(0, -8px, 0) scale(1) rotate(12deg); }
+  100% { opacity: 0; transform: translate3d(0, -26px, 0) scale(0.88) rotate(-8deg); }
+}
+
+@keyframes successMedalIn {
+  0% { opacity: 0; transform: scale(0.82) rotate(-10deg); }
+  60% { opacity: 1; transform: scale(1.04) rotate(2deg); }
+  100% { opacity: 1; transform: scale(1) rotate(0deg); }
+}
+
+@keyframes successCheckPop {
+  0% { opacity: 0; transform: scale(0.4); }
+  55% { opacity: 1; transform: scale(1.16); }
+  100% { opacity: 1; transform: scale(1); }
+}
+
+@keyframes successBurst {
+  0% { opacity: 0; transform: scale(0.78); }
+  22% { opacity: 0.65; }
+  100% { opacity: 0; transform: scale(1.28); }
+}
+
+@keyframes skeletonShimmer {
+  from { transform: translateX(-100%); }
+  to { transform: translateX(100%); }
+}
+
+@keyframes live-pulse {
+  0% { box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.55); }
+  70% { box-shadow: 0 0 0 8px rgba(34, 197, 94, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(34, 197, 94, 0); }
+}
+
+@keyframes toastSlideIn {
+  0% { opacity: 0; transform: translateX(24px) scale(0.96); }
+  100% { opacity: 1; transform: translateX(0) scale(1); }
+}
+
+@keyframes toastProgress {
+  from { transform: scaleX(1); }
+  to { transform: scaleX(0); }
+}
+
+@keyframes shimmerBar {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+/* ─── Reducao de Movimento (Acessibilidade) ─── */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}

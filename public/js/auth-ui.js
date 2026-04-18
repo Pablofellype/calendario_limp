@@ -106,7 +106,7 @@ async function sendLocalNotification(title, body) {
   if (!('Notification' in window)) return;
   if (Notification.permission !== 'granted') return;
 
-  const options = { body, icon: 'https://i.postimg.cc/nrCMQ8mx/logo-calendario.jpg', badge: 'https://i.postimg.cc/nrCMQ8mx/logo-calendario.jpg' };
+  const options = { body, icon: 'https://i.postimg.cc/c4LqxjXc/capa-calendario-nova.png', badge: 'https://i.postimg.cc/c4LqxjXc/capa-calendario-nova.png' };
   if (navigator.vibrate) navigator.vibrate([200, 100, 200]);
   // Mobile browsers are more reliable with ServiceWorkerRegistration.showNotification.
   try {
@@ -294,7 +294,8 @@ window.generatePDFReport = async function() {
 let deferredPrompt = null;
 function setupPWA() {
   const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
-  if (!isStandalone) {
+  const pwaDismissed = localStorage.getItem('pwa_install_dismissed');
+  if (!isStandalone && !pwaDismissed) {
     setTimeout(() => {
       const toast = document.getElementById('pwa-install-toast');
       if (toast) toast.classList.remove('translate-y-[150%]');
@@ -335,6 +336,7 @@ function setupPWA() {
 window.dismissInstall = function() {
   const toast = document.getElementById('pwa-install-toast');
   if (toast) toast.classList.add('translate-y-[150%]');
+  localStorage.setItem('pwa_install_dismissed', 'true');
 };
 
 window.closeIosModal = function() {
@@ -426,23 +428,34 @@ window.addEventListener('load', () => {
 });
 
 // --- LOGIN ---
-window.toggleLoginMode = function() {
+window.setLoginMode = function(mode) {
     const adminForm = document.getElementById('form-admin');
     const empForm = document.getElementById('form-employee');
     const title = document.getElementById('login-mode-title');
-    const btnToggle = document.getElementById('toggle-login-btn');
 
-    if (adminForm.classList.contains('hidden')) {
+    // Slide tab indicator
+    document.querySelectorAll('.login-tab').forEach(b => b.classList.remove('active'));
+    const activeBtn = document.getElementById(`mode-${mode}`);
+    if (activeBtn) activeBtn.classList.add('active');
+    const tabBar = document.getElementById('login-tab-bar');
+    if (tabBar) tabBar.dataset.active = mode === 'admin' ? '1' : '0';
+
+    if (mode === 'admin') {
         adminForm.classList.remove('hidden'); adminForm.classList.add('flex');
         empForm.classList.add('hidden');
-        title.innerHTML = `<h2 class="text-lg font-bold text-slate-800">Acesso Administrativo</h2><p class="text-xs text-slate-500">Area restrita</p>`;
-        btnToggle.innerText = "Sou Colaborador";
+        title.innerHTML = `<h2 class="text-lg font-black text-[#151515] tracking-tight">Acesso Administrativo</h2><p class="text-[13px] text-[#9ca3af] mt-0.5">Area restrita</p>`;
     } else {
         adminForm.classList.add('hidden'); adminForm.classList.remove('flex');
         empForm.classList.remove('hidden');
-        title.innerHTML = `<h2 class="text-lg font-bold text-slate-800">Acesso Colaborador</h2><p class="text-xs text-slate-500">Digite sua matricula para entrar</p>`;
-        btnToggle.innerText = "Sou Administrador";
+        title.innerHTML = `<h2 class="text-lg font-black text-[#151515] tracking-tight">Acesso Colaborador</h2><p class="text-[13px] text-[#9ca3af] mt-0.5">Digite sua matrícula para entrar</p>`;
     }
+    if (window.lucide) window.lucide.createIcons();
+}
+
+// Backwards compat
+window.toggleLoginMode = function() {
+    const adminForm = document.getElementById('form-admin');
+    window.setLoginMode(adminForm.classList.contains('hidden') ? 'admin' : 'employee');
 }
 
 window.handleEmployeeLogin = async function(e) {
@@ -452,7 +465,7 @@ window.handleEmployeeLogin = async function(e) {
     if (!matriculaInput || !pinInput) return;
 
     if (pinInput.length < 4) {
-      showCustomAlert('PIN invalido. Use ao menos 4 digitos.');
+      showCustomAlert('PIN inválido. Use ao menos 4 dígitos.');
       return;
     }
 
@@ -471,10 +484,10 @@ window.handleEmployeeLogin = async function(e) {
         const data = await res.json().catch(() => ({}));
         if (!res.ok || !data.ok || !data.token || !data.user) {
           const code = data && data.error ? String(data.error) : '';
-          if (code === 'invalid_credentials') showCustomAlert('Matricula ou PIN invalidos.');
-          else if (code === 'inactive_user') showCustomAlert('Acesso inativado. Procure a gestao.');
-          else if (code === 'pin_not_configured') showCustomAlert('Usuario sem PIN cadastrado. Procure a gestao.');
-          else showCustomAlert('Nao foi possivel autenticar.');
+          if (code === 'invalid_credentials') showCustomAlert('Matrícula ou PIN incorretos. Verifique e tente novamente.');
+          else if (code === 'inactive_user') showCustomAlert('Seu acesso foi desativado. Procure a gestão.');
+          else if (code === 'pin_not_configured') showCustomAlert('PIN não configurado para esta matrícula. Peça ao administrador para cadastrar seu PIN.');
+          else showCustomAlert('Não foi possível autenticar. Tente novamente.');
           return;
         }
 
@@ -483,7 +496,7 @@ window.handleEmployeeLogin = async function(e) {
         await signInWithCustomToken(auth, data.token);
     } catch (error) {
         console.error(error);
-        showCustomAlert('Erro de conexao.');
+        showCustomAlert('Erro de conexão. Verifique sua internet.');
     } finally {
         if (btn) btn.innerHTML = originalText;
     }
@@ -535,7 +548,7 @@ function completeLogin() {
             initPushNotificationsForUser(state.user);
         }
 
-        const roleColor = isAdmin ? 'text-[#f40009] border-[#f40009]/20' : 'text-blue-600 border-blue-200';
+        const roleColor = isAdmin ? 'text-[#e41e26] border-[#e41e26]/20' : 'text-blue-600 border-blue-200';
         badge.innerText = isAdmin ? 'Administrador' : 'Colaborador';
         badge.className = `text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full border bg-white shadow-sm whitespace-nowrap ${roleColor}`;
 

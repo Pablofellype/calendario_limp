@@ -57,29 +57,57 @@ window.closeTeamModal = function() {
     gsap.to(modal, { opacity: 0, duration: 0.3, delay: 0.1, onComplete: () => modal.classList.add('hidden') });
 }
 
+window.filterTeamList = function(query) {
+    const items = document.querySelectorAll('#team-list > div');
+    const q = (query || '').toUpperCase().trim();
+    items.forEach(item => {
+        const name = (item.dataset.name || '').toUpperCase();
+        const matricula = (item.dataset.matricula || '');
+        const match = !q || name.includes(q) || matricula.includes(q);
+        item.style.display = match ? '' : 'none';
+    });
+}
+
 function renderTeamList() {
     const list = document.getElementById('team-list');
     list.innerHTML = '';
+    const searchInput = document.getElementById('team-search');
+    if (searchInput) searchInput.value = '';
     const sorted = state.colaborators.sort((a,b) => a.nome.localeCompare(b.nome));
-    sorted.forEach(user => {
-        const avatar = user.photo 
-            ? `<img src="${user.photo}" class="w-10 h-10 rounded-full object-cover border border-slate-200">`
-            : `<div class="w-10 h-10 rounded-full bg-slate-100 flex items-center justify-center text-slate-500 font-bold border border-slate-200">${user.nome.charAt(0)}</div>`;
+    sorted.forEach((user, idx) => {
+        const avatar = user.photo
+            ? `<img src="${user.photo}" class="w-11 h-11 rounded-full object-cover border-2 border-white" style="box-shadow:0 2px 8px rgba(15,23,42,0.08)">`
+            : `<div class="w-11 h-11 rounded-full bg-[#e41e26] flex items-center justify-center text-white font-black text-sm" style="box-shadow:0 4px 12px rgba(228,30,38,0.2)">${user.nome.charAt(0)}</div>`;
+
+        const statusDot = user.active
+            ? `<span class="w-2 h-2 rounded-full bg-[#22c55e] shadow-[0_0_6px_rgba(34,197,94,0.4)]"></span>`
+            : `<span class="w-2 h-2 rounded-full bg-[#ef4444]"></span>`;
 
         const item = document.createElement('div');
-        item.className = "bg-white p-3 rounded-xl border border-slate-200 flex justify-between items-center shadow-sm";
+        item.className = "group bg-white p-4 rounded-[14px] border border-[#e5e7eb] flex justify-between items-center transition-all hover:border-[#e41e26]/20 cursor-pointer";
+        item.style.cssText = `box-shadow:0 2px 8px rgba(15,23,42,0.03); animation: teamCardIn 400ms cubic-bezier(.22,.78,.24,1) both; animation-delay: ${idx * 40}ms`;
+        item.dataset.name = user.nome;
+        item.dataset.matricula = user.matricula;
+        item.onclick = (e) => { if (e.target.closest('button')) return; openUserForm(user.matricula); };
         item.innerHTML = `
-            <div class="flex items-center gap-3">
-                ${avatar}
-                <div>
-                    <h4 class="font-bold text-slate-800 text-sm ${!user.active ? 'line-through text-slate-400' : ''}">${user.nome}</h4>
-                    <p class="text-[10px] text-slate-500 font-bold uppercase tracking-wide mt-0.5">
-                        ${user.funcao} - #${user.matricula}
-                        ${!user.active ? '<span class="text-red-500 ml-1">(INATIVO)</span>' : ''}
-                    </p>
+            <div class="flex items-center gap-3.5 min-w-0 flex-1">
+                <div class="relative flex-shrink-0">
+                    ${avatar}
+                    <div class="absolute -bottom-0.5 -right-0.5 w-4 h-4 rounded-full bg-white flex items-center justify-center border border-[#e5e7eb]">
+                        ${statusDot}
+                    </div>
+                </div>
+                <div class="min-w-0">
+                    <h4 class="font-extrabold text-[#151515] text-[13px] tracking-tight truncate ${!user.active ? 'line-through text-[#94a3b8]' : ''}">${user.nome}</h4>
+                    <div class="flex items-center gap-2 mt-1">
+                        <span class="text-[10px] text-[#6b7280] font-bold uppercase tracking-[0.1em] truncate">${user.funcao}</span>
+                        <span class="text-[#e5e7eb]">·</span>
+                        <span class="text-[10px] font-bold text-[#94a3b8] bg-[#fafafa] px-1.5 py-0.5 rounded-md border border-[#e5e7eb]">#${user.matricula}</span>
+                        ${!user.active ? '<span class="text-[9px] font-extrabold text-[#ef4444] bg-[#fef2f2] px-1.5 py-0.5 rounded-full border border-[#fecaca] uppercase tracking-wider">Inativo</span>' : ''}
+                    </div>
                 </div>
             </div>
-            <button onclick="openUserForm('${user.matricula}')" class="p-2 bg-slate-50 text-blue-500 rounded-lg hover:bg-blue-50 transition-colors">
+            <button onclick="openUserForm('${user.matricula}')" class="p-2.5 rounded-[10px] text-[#cbd5e1] hover:text-[#e41e26] hover:bg-[#fef2f2] transition-all opacity-0 group-hover:opacity-100 flex-shrink-0" title="Editar">
                 <i data-lucide="pencil" class="w-4 h-4"></i>
             </button>`;
         list.appendChild(item);
@@ -248,7 +276,7 @@ window.saveUser = async function(e) {
 
     if (!name || !newMatricula) return;
     if (pinRaw && pinRaw.length < 4) {
-        showCustomAlert('PIN invalido. Use ao menos 4 digitos.');
+        showCustomAlert('PIN inválido. Use ao menos 4 dígitos.');
         return;
     }
     if (!oldMatricula && !pinRaw) {
@@ -256,7 +284,7 @@ window.saveUser = async function(e) {
         return;
     }
     if (oldMatricula && oldMatricula !== newMatricula && !pinRaw) {
-        showCustomAlert('Ao alterar matricula, informe um novo PIN.');
+        showCustomAlert('Ao alterar a matrícula, informe um novo PIN.');
         return;
     }
 
@@ -277,11 +305,11 @@ window.saveUser = async function(e) {
             const oldSnap = await getDoc(doc(db, "users", oldMatricula));
             const oldData = oldSnap.exists() ? oldSnap.data() : {};
             const mergedData = { ...oldData, ...userData };
-            delete mergedData.pinHash;
+            if (pinRaw) delete mergedData.pinHash;
             await setDoc(doc(db, "users", newMatricula), mergedData);
             await deleteDoc(doc(db, "users", oldMatricula));
         } else {
-            userData.pinHash = deleteField();
+            if (pinRaw) userData.pinHash = deleteField();
             await setDoc(doc(db, "users", newMatricula), userData, { merge: true });
         }
 
@@ -321,9 +349,9 @@ function renderCollaboratorTags() {
     if (!container) return;
 
     container.innerHTML = state.selectedCollaborators.map(name => `
-        <span class="bg-blue-100 text-blue-600 px-2 py-1 rounded-lg text-xs font-bold border border-blue-200 flex items-center gap-1">
+        <span class="bg-[#fef2f2] text-[#e41e26] px-2.5 py-1 rounded-full text-[10px] font-bold border border-[#e41e26]/15 flex items-center gap-1.5 transition-all hover:bg-[#e41e26] hover:text-white hover:border-[#e41e26]">
             ${name}
-            <button onclick="removeCollaboratorTag('${name}')" type="button" class="hover:text-blue-800 flex items-center justify-center">
+            <button onclick="removeCollaboratorTag('${name}')" type="button" class="flex items-center justify-center opacity-60 hover:opacity-100">
                 <i data-lucide="x" class="w-3 h-3"></i>
             </button>
         </span>
@@ -347,11 +375,14 @@ function setupAutocomplete() {
 
         if (matches.length > 0) {
             matches.forEach(c => {
+                const suggAvatar = c.photo
+                    ? `<img src="${c.photo}" class="w-7 h-7 rounded-full object-cover border border-white" style="box-shadow:0 1px 3px rgba(15,23,42,0.08)">`
+                    : `<div class="w-7 h-7 rounded-full bg-[#e41e26] flex items-center justify-center text-white font-black text-[10px]">${c.nome.charAt(0)}</div>`;
                 const item = document.createElement('div');
-                item.className = "px-4 py-3 cursor-pointer hover:bg-slate-50 border-b border-slate-50 flex justify-between items-center";
-                item.innerHTML = `<span class="font-bold text-slate-700 text-sm">${c.nome}</span><span class="text-[10px] bg-slate-100 text-slate-500 px-1 rounded">#${c.matricula}</span>`;
-                item.onclick = () => { 
-                    addCollaboratorTag(c.nome, c.matricula); input.value = ''; suggestionsBox.classList.add('hidden'); input.focus(); 
+                item.className = "px-3.5 py-2.5 cursor-pointer hover:bg-[#fef2f2] border-b border-[#e5e7eb]/40 flex items-center gap-3 transition-colors";
+                item.innerHTML = `${suggAvatar}<div class="flex-1 min-w-0"><span class="font-bold text-[#151515] text-[12px] block truncate">${c.nome}</span><span class="text-[9px] font-bold text-[#94a3b8] uppercase tracking-wider">${c.funcao} · #${c.matricula}</span></div>`;
+                item.onclick = () => {
+                    addCollaboratorTag(c.nome, c.matricula); input.value = ''; suggestionsBox.classList.add('hidden'); input.focus();
                 };
                 suggestionsBox.appendChild(item);
             });
@@ -378,12 +409,15 @@ window.handleEditSearch = function(input, taskId) {
     const matches = state.colaborators.filter(c => c.active && c.nome.toUpperCase().startsWith(val));
     if (matches.length > 0) {
         matches.forEach(c => {
+            const editAvatar = c.photo
+                ? `<img src="${c.photo}" class="w-6 h-6 rounded-full object-cover border border-white" style="box-shadow:0 1px 3px rgba(15,23,42,0.08)">`
+                : `<div class="w-6 h-6 rounded-full bg-[#e41e26] flex items-center justify-center text-white font-black text-[8px]">${c.nome.charAt(0)}</div>`;
             const item = document.createElement('div');
-            item.className = "px-4 py-2 cursor-pointer hover:bg-slate-50 border-b border-slate-50 flex justify-between items-center bg-white";
-            item.innerHTML = `<span class="font-bold text-slate-700 text-xs">${c.nome}</span>`;
-            item.onclick = () => { 
-                input.value = c.nome; 
-                suggestionsBox.classList.add('hidden'); 
+            item.className = "px-3 py-2 cursor-pointer hover:bg-[#fef2f2] border-b border-[#e5e7eb]/40 flex items-center gap-2.5 bg-white transition-colors";
+            item.innerHTML = `${editAvatar}<span class="font-bold text-[#151515] text-[11px]">${c.nome}</span>`;
+            item.onclick = () => {
+                input.value = c.nome;
+                suggestionsBox.classList.add('hidden');
             };
             suggestionsBox.appendChild(item);
         });
@@ -401,9 +435,9 @@ window.addLocalTag = function(taskId) {
     if(exists) { input.value = ''; return; }
 
     const span = document.createElement('span');
-    span.className = "cursor-pointer hover:bg-red-100 hover:text-red-500 inline-flex items-center px-2 py-1 rounded bg-slate-50 text-xs font-bold text-slate-600 border border-slate-200 mr-1 mb-1";
+    span.className = "cursor-pointer hover:bg-[#fef2f2] hover:text-[#e41e26] hover:border-[#e41e26]/30 inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-[#fafafa] text-[10px] font-bold text-[#151515] border border-[#e5e7eb] transition-all";
     span.dataset.name = name;
-    span.innerHTML = `${name} <i data-lucide="x" class="w-3 h-3 ml-1"></i>`;
+    span.innerHTML = `${name} <i data-lucide="x" class="w-3 h-3 text-[#94a3b8]"></i>`;
     span.onclick = function() { this.remove(); };
     
     container.appendChild(span);

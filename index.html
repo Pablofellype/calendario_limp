@@ -1,0 +1,679 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Calendário DPA — Sistema Atualizado</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Barlow:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{
+  font-family:"Barlow","Segoe UI",sans-serif;
+  background:#050505;color:#fff;
+  -webkit-font-smoothing:antialiased;
+  overflow-x:hidden;
+}
+
+/* ── bg ── */
+.bg{position:fixed;inset:0;z-index:0;overflow:hidden}
+.orb{position:absolute;border-radius:50%;filter:blur(90px);animation:orbDrift 10s ease-in-out infinite alternate}
+.orb-1{width:50vmax;height:50vmax;background:rgba(228,30,38,.35);top:-22%;left:-15%}
+.orb-2{width:38vmax;height:38vmax;background:rgba(120,20,20,.4);bottom:-18%;right:-12%;animation-delay:3s}
+.orb-3{width:22vmax;height:22vmax;background:rgba(180,30,30,.15);top:45%;left:60%;animation-delay:5s}
+.bg .vignette{position:absolute;inset:0;background:radial-gradient(ellipse at center,transparent 40%,rgba(0,0,0,.55) 100%)}
+
+/* ── floating dates bg ── */
+.floating-dates{position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden}
+.float-date{
+  position:absolute;
+  font-family:"Archivo Black",sans-serif;font-weight:900;
+  color:rgba(255,255,255,.025);
+  line-height:1;user-select:none;
+}
+
+/* ── particles ── */
+.particles{position:fixed;inset:0;z-index:1;pointer-events:none}
+.particle{position:absolute;border-radius:50%;background:rgba(228,30,38,.5);animation:floatUp linear infinite}
+.particle.white{background:rgba(255,255,255,.25)}
+
+/* ── layout ── */
+.page{position:relative;z-index:2;max-width:680px;margin:0 auto;padding:0 1.25rem;}
+
+/* ── preloader ── */
+.curtain{
+  position:fixed;inset:0;z-index:200;display:flex;align-items:center;justify-content:center;
+  background:#050505;
+}
+.curtain-inner{display:flex;flex-direction:column;align-items:center;gap:.8rem;}
+.curtain-logo{
+  font-family:"Archivo Black",sans-serif;font-size:1.6rem;font-weight:900;
+  text-transform:uppercase;letter-spacing:-.02em;color:#fff;
+  opacity:0;
+}
+.curtain-logo span{
+  background:linear-gradient(135deg,#ff4444,#e41e26,#ff6b6b);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+}
+.curtain-bar{width:120px;height:2px;background:rgba(255,255,255,.08);border-radius:2px;overflow:hidden;opacity:0}
+.curtain-bar-fill{width:0;height:100%;background:linear-gradient(90deg,#e41e26,#ff6b6b);border-radius:2px;}
+
+.scanline{position:fixed;inset:0;z-index:3;pointer-events:none;background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,.03) 2px,rgba(0,0,0,.03) 4px)}
+
+/* ── hero ── */
+.hero{
+  min-height:100dvh;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  text-align:center;gap:clamp(.6rem,2vh,1.2rem);
+  padding:2rem 0;
+}
+
+.badge{
+  display:inline-flex;align-items:center;gap:.5rem;
+  background:rgba(228,30,38,.12);border:1px solid rgba(228,30,38,.25);
+  backdrop-filter:blur(16px);color:#ff6b6b;
+  font-size:.6rem;font-weight:700;letter-spacing:.22em;text-transform:uppercase;
+  padding:.38rem 1rem;border-radius:9999px;
+  clip-path:inset(0 100% 0 0);
+}
+
+.hero-title{
+  font-family:"Archivo Black",sans-serif;
+  font-size:clamp(3rem,10vw,6.5rem);font-weight:900;line-height:.82;
+  letter-spacing:-.04em;text-transform:uppercase;
+}
+.hero-title .line{display:block;overflow:hidden}
+.hero-title .line span{display:inline-block;transform:translateY(110%)}
+.hero-title .red{
+  background:linear-gradient(135deg,#ff4444 0%,#e41e26 40%,#ff6b6b 100%);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+  filter:drop-shadow(0 0 30px rgba(228,30,38,.3));
+}
+
+.hero-sub{
+  font-size:clamp(.85rem,1.8vw,1.05rem);color:rgba(255,255,255,.45);
+  font-weight:500;line-height:1.6;max-width:460px;
+  opacity:0;transform:translateY(20px);
+}
+
+.hero-line{width:1px;height:0;background:rgba(255,255,255,.12);margin-top:.5rem;}
+
+.scroll-hint{
+  display:flex;flex-direction:column;align-items:center;gap:.25rem;
+  opacity:0;transform:translateY(10px);
+}
+.scroll-hint span{font-size:.55rem;color:rgba(255,255,255,.18);font-weight:600;letter-spacing:.2em;text-transform:uppercase}
+.scroll-chevrons{display:flex;flex-direction:column;align-items:center;}
+.scroll-chevron{
+  width:14px;height:14px;
+  border-right:1.5px solid rgba(255,255,255,.15);border-bottom:1.5px solid rgba(255,255,255,.15);
+  transform:rotate(45deg);
+}
+.scroll-chevron:nth-child(1){animation:chevronCascade 2s ease-in-out infinite}
+.scroll-chevron:nth-child(2){animation:chevronCascade 2s ease-in-out .2s infinite;margin-top:-6px;}
+
+/* ── novidades ── */
+.novidades{padding:3rem 0 3rem;}
+
+.section-eyebrow{
+  display:flex;align-items:center;gap:.8rem;
+  font-size:.6rem;font-weight:700;letter-spacing:.3em;text-transform:uppercase;
+  color:rgba(228,30,38,.55);margin-bottom:1.2rem;
+  opacity:0;transform:translateY(20px);
+}
+.section-eyebrow::before{content:'';width:28px;height:2.5px;background:#e41e26;border-radius:2px;}
+.section-title{
+  font-family:"Archivo Black",sans-serif;font-size:clamp(2rem,6vw,3.2rem);
+  font-weight:900;text-transform:uppercase;letter-spacing:-.035em;
+  margin-bottom:1rem;color:#fff;line-height:.9;
+  opacity:0;transform:translateY(30px);
+}
+.section-desc{
+  font-size:clamp(.82rem,1.6vw,.95rem);color:rgba(255,255,255,.35);
+  font-weight:500;line-height:1.6;margin-bottom:3rem;max-width:440px;
+  opacity:0;transform:translateY(20px);
+}
+
+.updates{display:flex;flex-direction:column;gap:0;position:relative;}
+
+/* timeline line */
+.updates::before{
+  content:'';position:absolute;left:19px;top:0;bottom:0;
+  width:1px;background:linear-gradient(180deg,rgba(228,30,38,.2),rgba(255,255,255,.06),rgba(228,30,38,.2));
+}
+
+.update-item{
+  display:flex;align-items:flex-start;gap:1.5rem;
+  padding:1.8rem 0;
+  border-bottom:1px solid rgba(255,255,255,.04);
+  opacity:0;transform:translateY(50px);
+  position:relative;
+}
+.update-item:last-child{border-bottom:none}
+
+/* number on timeline */
+.item-num{
+  flex-shrink:0;width:38px;height:38px;border-radius:10px;
+  display:flex;align-items:center;justify-content:center;
+  font-family:"Archivo Black",sans-serif;font-size:.75rem;font-weight:900;
+  background:#151515;border:1px solid rgba(255,255,255,.1);color:rgba(255,255,255,.5);
+  position:relative;z-index:2;
+  transition:all .4s cubic-bezier(.22,.78,.24,1);
+}
+.update-item:hover .item-num{
+  background:#e41e26;border-color:#e41e26;color:#fff;
+  transform:scale(1.2) rotate(-8deg);
+  box-shadow:0 0 25px rgba(228,30,38,.35);
+}
+
+.item-body{flex:1;min-width:0;}
+
+.item-tag{
+  display:inline-block;font-size:.5rem;font-weight:700;letter-spacing:.15em;text-transform:uppercase;
+  padding:.2rem .55rem;border-radius:4px;margin-bottom:.6rem;
+}
+.tag-novo{background:rgba(228,30,38,.12);color:#ff6b6b;}
+.tag-melhoria{background:rgba(34,197,94,.1);color:#4ade80;}
+.tag-seguranca{background:rgba(245,158,11,.1);color:#fbbf24;}
+
+.item-title{
+  font-family:"Archivo Black",sans-serif;
+  font-size:clamp(1.1rem,3vw,1.5rem);
+  font-weight:900;text-transform:uppercase;letter-spacing:-.025em;
+  color:#fff;line-height:.95;margin-bottom:.6rem;
+  transition:color .3s ease;
+}
+.update-item:hover .item-title{color:#ff6b6b}
+
+.item-desc{
+  font-size:clamp(.78rem,1.4vw,.88rem);font-weight:400;
+  color:rgba(255,255,255,.35);line-height:1.6;
+  max-width:500px;
+}
+
+/* progress bar inside each card */
+.item-progress{
+  margin-top:.8rem;height:2px;background:rgba(255,255,255,.05);border-radius:2px;
+  overflow:hidden;width:0;transition:width .8s cubic-bezier(.22,.78,.24,1);
+}
+.update-item.visible .item-progress{width:100%}
+.item-progress-fill{
+  height:100%;width:0;border-radius:2px;
+  transition:width 1.2s cubic-bezier(.22,.78,.24,1) .3s;
+}
+.update-item.visible .item-progress-fill{width:100%}
+.fill-red{background:linear-gradient(90deg,#e41e26,#ff6b6b)}
+.fill-green{background:linear-gradient(90deg,#22c55e,#4ade80)}
+.fill-blue{background:linear-gradient(90deg,#3b82f6,#60a5fa)}
+.fill-purple{background:linear-gradient(90deg,#a855f7,#c084fc)}
+.fill-amber{background:linear-gradient(90deg,#f59e0b,#fbbf24)}
+.fill-pink{background:linear-gradient(90deg,#ec4899,#f472b6)}
+.fill-teal{background:linear-gradient(90deg,#14b8a6,#2dd4bf)}
+.fill-indigo{background:linear-gradient(90deg,#6366f1,#818cf8)}
+
+/* ── aviso final ── */
+.aviso-final{
+  text-align:center;padding:2.5rem 0 1rem;
+  border-top:1px solid rgba(255,255,255,.06);
+  margin-top:2rem;
+  opacity:0;transform:translateY(30px);
+}
+.aviso-badge{
+  display:inline-flex;align-items:center;gap:.4rem;
+  background:rgba(245,158,11,.06);border:1px solid rgba(245,158,11,.15);
+  border-radius:8px;padding:.5rem 1.1rem;
+  animation:avisoPulse 3s ease-in-out infinite;
+}
+.aviso-text{font-size:.7rem;color:rgba(245,158,11,.6);font-weight:600;line-height:1.5;}
+.aviso-text strong{color:rgba(245,158,11,.85);}
+
+/* ── CTA button with loading state ── */
+.final-cta{
+  margin-top:1.5rem;
+  display:inline-flex;align-items:center;justify-content:center;gap:.6rem;
+  padding:.8rem 2.2rem;min-width:260px;min-height:48px;
+  background:#fff;color:#151515;
+  font-weight:800;font-size:.82rem;letter-spacing:.05em;text-transform:uppercase;
+  text-decoration:none;border-radius:10px;
+  transition:all .3s cubic-bezier(.22,.78,.24,1);
+  box-shadow:0 4px 20px rgba(255,255,255,.08);
+  position:relative;overflow:hidden;cursor:pointer;
+}
+.final-cta::before{
+  content:'';position:absolute;top:0;left:-100%;width:100%;height:100%;
+  background:linear-gradient(90deg,transparent,rgba(228,30,38,.06),transparent);
+  transition:left .5s ease;
+}
+.final-cta:hover::before{left:100%}
+.final-cta:hover{transform:translateY(-3px) scale(1.03);box-shadow:0 10px 30px rgba(255,255,255,.12)}
+.final-cta:active{transform:translateY(0) scale(.97)}
+.final-cta .arrow{transition:transform .3s cubic-bezier(.22,.78,.24,1);font-size:1rem}
+.final-cta:hover .arrow{transform:translateX(5px)}
+
+.final-cta.loading{
+  pointer-events:none;
+  background:#151515;color:#fff;
+  box-shadow:0 4px 30px rgba(228,30,38,.15);
+}
+.final-cta .btn-text{transition:opacity .3s ease}
+.final-cta.loading .btn-text{opacity:0}
+.final-cta .btn-loader{
+  position:absolute;display:flex;align-items:center;gap:.7rem;
+  opacity:0;transition:opacity .3s ease;
+}
+.final-cta.loading .btn-loader{opacity:1}
+
+/* mini calendar in button */
+.mini-cal{
+  width:28px;height:28px;
+  border:2px solid rgba(255,255,255,.3);
+  border-radius:5px;
+  display:flex;flex-direction:column;
+  overflow:hidden;
+  animation:calPulse 1.2s ease-in-out infinite;
+}
+.mini-cal-header{height:8px;background:#e41e26;}
+.mini-cal-body{
+  flex:1;display:grid;grid-template-columns:repeat(3,1fr);gap:1px;
+  padding:2px;
+}
+.mini-cal-dot{
+  width:100%;aspect-ratio:1;border-radius:1px;
+  background:rgba(255,255,255,.2);
+  animation:calDotFill .8s ease forwards;
+}
+.mini-cal-dot:nth-child(1){animation-delay:.1s}
+.mini-cal-dot:nth-child(2){animation-delay:.2s}
+.mini-cal-dot:nth-child(3){animation-delay:.3s}
+.mini-cal-dot:nth-child(4){animation-delay:.4s}
+.mini-cal-dot:nth-child(5){animation-delay:.5s}
+.mini-cal-dot:nth-child(6){animation-delay:.6s}
+
+.loading-text{font-size:.7rem;font-weight:700;letter-spacing:.08em}
+.loading-dots::after{
+  content:'';
+  animation:dots 1.5s steps(4) infinite;
+}
+
+.foot{font-size:.55rem;color:rgba(255,255,255,.08);font-weight:500;letter-spacing:.05em;text-align:center;padding:2rem 0 1.5rem;}
+
+/* ── keyframes ── */
+@keyframes orbDrift{0%{transform:translate(0,0) scale(1)}100%{transform:translate(40px,-30px) scale(1.08)}}
+@keyframes floatUp{0%{transform:translateY(100vh) scale(0);opacity:0}8%{opacity:.7}85%{opacity:.7}100%{transform:translateY(-10vh) scale(1.2);opacity:0}}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.3;transform:scale(1.8)}}
+@keyframes chevronCascade{0%,100%{opacity:.15;transform:rotate(45deg) translate(0,0)}50%{opacity:.5;transform:rotate(45deg) translate(3px,3px)}}
+@keyframes avisoPulse{0%,100%{border-color:rgba(245,158,11,.15)}50%{border-color:rgba(245,158,11,.4)}}
+@keyframes calPulse{0%,100%{transform:scale(1)}50%{transform:scale(1.08)}}
+@keyframes calDotFill{from{background:rgba(255,255,255,.1)}to{background:rgba(228,30,38,.6)}}
+@keyframes dots{0%{content:''}25%{content:'.'}50%{content:'..'}75%{content:'...'}}
+@keyframes floatDate{
+  0%{transform:translateY(0) rotate(var(--r));opacity:var(--o)}
+  50%{opacity:calc(var(--o) * 1.3)}
+  100%{transform:translateY(-15px) rotate(var(--r));opacity:var(--o)}
+}
+
+/* ── mobile ── */
+@media(max-width:480px){
+  .update-item{gap:1rem;padding:1.4rem 0}
+  .item-num{width:32px;height:32px;font-size:.65rem}
+  .item-title{font-size:clamp(1rem,4vw,1.2rem)}
+  .item-desc{font-size:.74rem}
+  .updates::before{left:15px}
+}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;transition-duration:.01ms!important}}
+</style>
+</head>
+<body>
+
+<!-- CURTAIN PRELOADER -->
+<div class="curtain" id="curtain">
+  <div class="curtain-inner">
+    <div class="curtain-logo" id="curtainLogo">Calendário <span>DPA</span></div>
+    <div class="curtain-bar" id="curtainBar"><div class="curtain-bar-fill" id="curtainFill"></div></div>
+  </div>
+</div>
+
+<div class="scanline"></div>
+
+<div class="bg">
+  <div class="orb orb-1"></div>
+  <div class="orb orb-2"></div>
+  <div class="orb orb-3"></div>
+  <div class="vignette"></div>
+</div>
+<div class="floating-dates" id="floatingDates"></div>
+<div class="particles" id="particles"></div>
+
+<div class="page">
+
+  <section class="hero" id="hero">
+    <div class="badge" id="badge"><span class="dot"></span> Nova Versão Disponível</div>
+
+    <h1 class="hero-title" id="heroTitle">
+      <span class="line"><span>Calendário</span></span>
+      <span class="line"><span class="red">DPA</span></span>
+    </h1>
+
+    <p class="hero-sub" id="heroSub">O sistema de gestão de escalas e limpeza foi completamente reconstruído do zero. Nova interface, novos recursos e muito mais segurança para o dia a dia da equipe.</p>
+
+    <div class="hero-line" id="heroLine"></div>
+
+    <div class="scroll-hint" id="scrollHint">
+      <span>Veja o que mudou</span>
+      <div class="scroll-chevrons">
+        <div class="scroll-chevron"></div>
+        <div class="scroll-chevron"></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="novidades" id="novidades">
+    <p class="section-eyebrow" data-reveal>O que há de novo</p>
+    <h2 class="section-title" data-reveal>Tudo que<br>mudou nesta<br>atualização</h2>
+    <p class="section-desc" data-reveal>8 novidades que vão transformar como você gerencia escalas e atividades da equipe.</p>
+
+    <div class="updates">
+
+      <div class="update-item" data-reveal>
+        <div class="item-num">01</div>
+        <div class="item-body">
+          <span class="item-tag tag-novo">Novo</span>
+          <h3 class="item-title">Filtros por<br>semana e mês</h3>
+          <p class="item-desc">Escolha se quer ver o calendário completo do mês ou apenas a semana atual. Encontre suas atividades sem procurar no meio de tudo.</p>
+          <div class="item-progress"><div class="item-progress-fill fill-red"></div></div>
+        </div>
+      </div>
+
+      <div class="update-item" data-reveal>
+        <div class="item-num">02</div>
+        <div class="item-body">
+          <span class="item-tag tag-melhoria">Melhoria</span>
+          <h3 class="item-title">Sistema mais<br>robusto e estável</h3>
+          <p class="item-desc">Infraestrutura completamente refeita. Carregamento mais rápido, zero travamentos e dados sincronizados em tempo real entre todos os dispositivos.</p>
+          <div class="item-progress"><div class="item-progress-fill fill-green"></div></div>
+        </div>
+      </div>
+
+      <div class="update-item" data-reveal>
+        <div class="item-num">03</div>
+        <div class="item-body">
+          <span class="item-tag tag-novo">Novo</span>
+          <h3 class="item-title">Explicações<br>dentro do app</h3>
+          <p class="item-desc">Guia interativo integrado. Na primeira vez que acessar, o sistema te mostra passo a passo como usar cada função — sem precisar pedir ajuda.</p>
+          <div class="item-progress"><div class="item-progress-fill fill-blue"></div></div>
+        </div>
+      </div>
+
+      <div class="update-item" data-reveal>
+        <div class="item-num">04</div>
+        <div class="item-body">
+          <span class="item-tag tag-melhoria">Melhoria</span>
+          <h3 class="item-title">Funciona em<br>qualquer tela</h3>
+          <p class="item-desc">Celular, tablet ou computador — a interface se adapta perfeitamente. Tudo pensado para funcionar bem no celular, que é o que a equipe mais usa.</p>
+          <div class="item-progress"><div class="item-progress-fill fill-purple"></div></div>
+        </div>
+      </div>
+
+      <div class="update-item" data-reveal>
+        <div class="item-num">05</div>
+        <div class="item-body">
+          <span class="item-tag tag-seguranca">Segurança</span>
+          <h3 class="item-title">Acesso do<br>colaborador seguro</h3>
+          <p class="item-desc">Portal disponível com login por matrícula e PIN. Cada pessoa acessa apenas suas escalas e atividades, com total segurança e privacidade.</p>
+          <div class="item-progress"><div class="item-progress-fill fill-amber"></div></div>
+        </div>
+      </div>
+
+      <div class="update-item" data-reveal>
+        <div class="item-num">06</div>
+        <div class="item-body">
+          <span class="item-tag tag-novo">Novo</span>
+          <h3 class="item-title">Upload de<br>fotos liberado</h3>
+          <p class="item-desc">Envie fotos diretamente pelo sistema como comprovante das atividades realizadas. Envio seguro com imagens vinculadas à tarefa correspondente.</p>
+          <div class="item-progress"><div class="item-progress-fill fill-pink"></div></div>
+        </div>
+      </div>
+
+      <div class="update-item" data-reveal>
+        <div class="item-num">07</div>
+        <div class="item-body">
+          <span class="item-tag tag-melhoria">Melhoria</span>
+          <h3 class="item-title">Painel de atividades<br>redesenhado</h3>
+          <p class="item-desc">Visual completamente novo para adicionar e gerenciar atividades. Mais limpo, mais organizado e com tudo visível sem ficar clicando em vários lugares.</p>
+          <div class="item-progress"><div class="item-progress-fill fill-teal"></div></div>
+        </div>
+      </div>
+
+      <div class="update-item" data-reveal>
+        <div class="item-num">08</div>
+        <div class="item-body">
+          <span class="item-tag tag-melhoria">Melhoria</span>
+          <h3 class="item-title">Animações<br>suaves no celular</h3>
+          <p class="item-desc">Transições criadas para mobile. Tudo responde de forma fluida ao toque — abrir tarefas, trocar de mês, marcar como concluído — com feedback visual imediato.</p>
+          <div class="item-progress"><div class="item-progress-fill fill-indigo"></div></div>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="aviso-final" data-reveal>
+      <div class="aviso-badge">
+        <span class="aviso-text"><strong>Atenção:</strong> Esta página será removida em breve.<br>Salve o link do novo sistema antes que saia do ar.</span>
+      </div>
+      <br>
+      <a href="https://calendario-dpa.vercel.app/" class="final-cta" id="ctaBtn" onclick="handleCta(event)">
+        <span class="btn-text">Acessar o Novo Calendário <span class="arrow">→</span></span>
+        <span class="btn-loader">
+          <span class="mini-cal">
+            <span class="mini-cal-header"></span>
+            <span class="mini-cal-body">
+              <span class="mini-cal-dot"></span>
+              <span class="mini-cal-dot"></span>
+              <span class="mini-cal-dot"></span>
+              <span class="mini-cal-dot"></span>
+              <span class="mini-cal-dot"></span>
+              <span class="mini-cal-dot"></span>
+            </span>
+          </span>
+          <span class="loading-text">Carregando<span class="loading-dots"></span></span>
+        </span>
+      </a>
+    </div>
+  </section>
+
+  <div class="foot">Calendário DPA &copy; 2026</div>
+
+</div>
+
+<script>
+// ── Floating dates background ──
+(function(){
+  var c=document.getElementById('floatingDates');
+  var dates=['01','02','03','05','07','08','10','12','14','15','17','19','20','22','24','25','27','28','30','31'];
+  var months=['JAN','FEV','MAR','ABR','MAI','JUN','JUL','AGO','SET','OUT','NOV','DEZ'];
+  var n=window.innerWidth<500?14:24;
+  for(var i=0;i<n;i++){
+    var el=document.createElement('div');
+    el.className='float-date';
+    var isMonth=Math.random()>.7;
+    el.textContent=isMonth?months[Math.floor(Math.random()*months.length)]:dates[Math.floor(Math.random()*dates.length)];
+    el.style.fontSize=(Math.random()*4+2)+'rem';
+    el.style.left=Math.random()*100+'%';
+    el.style.top=Math.random()*100+'%';
+    var o=Math.random()*.02+.015;
+    var r=(Math.random()*30-15);
+    el.style.setProperty('--o',o);
+    el.style.setProperty('--r',r+'deg');
+    el.style.opacity=o;
+    el.style.transform='rotate('+r+'deg)';
+    el.style.animation='floatDate '+(Math.random()*6+4)+'s ease-in-out '+(Math.random()*4)+'s infinite alternate';
+    c.appendChild(el);
+  }
+})();
+
+// ── Particles ──
+(function(){
+  var c=document.getElementById('particles'),n=window.innerWidth<500?18:35;
+  for(var i=0;i<n;i++){
+    var p=document.createElement('div');
+    p.className='particle'+(Math.random()>.7?' white':'');
+    p.style.left=Math.random()*100+'%';
+    var s=Math.random()*2.5+1;
+    p.style.width=s+'px';p.style.height=s+'px';
+    p.style.animationDuration=(Math.random()*8+5)+'s';
+    p.style.animationDelay=(Math.random()*8)+'s';
+    c.appendChild(p);
+  }
+})();
+
+// ── Curtain preloader with progress bar ──
+(function(){
+  var curtain=document.getElementById('curtain');
+  var logo=document.getElementById('curtainLogo');
+  var bar=document.getElementById('curtainBar');
+  var fill=document.getElementById('curtainFill');
+  var ease='cubic-bezier(.22,.78,.24,1)';
+
+  // logo fade in
+  setTimeout(function(){
+    logo.style.transition='opacity .4s ease, transform .4s ease';
+    logo.style.opacity='1';logo.style.transform='scale(1)';
+  },100);
+
+  // bar appears
+  setTimeout(function(){
+    bar.style.transition='opacity .3s ease';
+    bar.style.opacity='1';
+  },400);
+
+  // bar fills
+  setTimeout(function(){
+    fill.style.transition='width .7s '+ease;
+    fill.style.width='100%';
+  },500);
+
+  // logo scales up + blurs out
+  setTimeout(function(){
+    logo.style.transition='all .5s '+ease;
+    logo.style.opacity='0';logo.style.transform='scale(1.8)';logo.style.filter='blur(10px)';
+    bar.style.transition='opacity .3s ease';
+    bar.style.opacity='0';
+  },1300);
+
+  // curtain fades
+  setTimeout(function(){
+    curtain.style.transition='opacity .5s ease';
+    curtain.style.opacity='0';
+    setTimeout(function(){curtain.style.display='none'},500);
+  },1600);
+})();
+
+// ── Hero entrance timeline ──
+(function(){
+  var ease='cubic-bezier(.22,.78,.24,1)';
+  var badge=document.getElementById('badge');
+  var lines=document.querySelectorAll('.hero-title .line span');
+  var sub=document.getElementById('heroSub');
+  var line=document.getElementById('heroLine');
+  var hint=document.getElementById('scrollHint');
+
+  function anim(el,props,dur,delay){
+    setTimeout(function(){
+      el.style.transition='all '+dur+'s '+ease;
+      Object.keys(props).forEach(function(k){el.style[k]=props[k]});
+    },delay);
+  }
+
+  var t=1800;
+
+  // badge wipe
+  setTimeout(function(){
+    badge.style.transition='clip-path .7s '+ease;
+    badge.style.clipPath='inset(0 0% 0 0)';
+  },t);
+
+  // title lines slide up with bounce
+  lines.forEach(function(s,i){
+    setTimeout(function(){
+      s.style.transition='transform .8s cubic-bezier(.16,1.2,.3,1)';
+      s.style.transform='translateY(0)';
+    },t+250+(i*180));
+  });
+
+  // subtitle
+  anim(sub,{opacity:'1',transform:'translateY(0)'},.8,t+750);
+
+  // vertical line grow
+  setTimeout(function(){
+    line.style.transition='height 1s '+ease;
+    line.style.height='55px';
+  },t+1050);
+
+  // scroll hint
+  anim(hint,{opacity:'1',transform:'translateY(0)'},.6,t+1400);
+})();
+
+// ── Scroll reveal with stagger ──
+(function(){
+  var els=document.querySelectorAll('[data-reveal]');
+  var count=0;
+
+  var obs=new IntersectionObserver(function(entries){
+    entries.forEach(function(e){
+      if(!e.isIntersecting)return;
+      count++;
+      var d=count*80;
+
+      setTimeout(function(){
+        e.target.style.transition='opacity .8s cubic-bezier(.22,.78,.24,1), transform .8s cubic-bezier(.22,.78,.24,1)';
+        e.target.style.opacity='1';
+        e.target.style.transform='translateY(0) scale(1)';
+        e.target.classList.add('visible');
+      },d);
+
+      obs.unobserve(e.target);
+    });
+  },{threshold:.08,rootMargin:'0px 0px -20px 0px'});
+
+  els.forEach(function(el){obs.observe(el)});
+})();
+
+// ── Parallax on scroll ──
+(function(){
+  var hero=document.getElementById('hero');
+  var dates=document.getElementById('floatingDates');
+  window.addEventListener('scroll',function(){
+    var s=window.scrollY;
+    var h=window.innerHeight;
+    var p=Math.min(s/h,1);
+    hero.style.opacity=1-p*1.3;
+    hero.style.transform='translateY('+s*.35+'px) scale('+(1-p*.06)+')';
+    dates.style.transform='translateY('+s*-.15+'px)';
+  },{passive:true});
+})();
+
+// ── Tilt on mouse (desktop) ──
+if(window.innerWidth>768){
+  document.addEventListener('mousemove',function(e){
+    if(window.scrollY>window.innerHeight*.5)return;
+    var hero=document.getElementById('hero');
+    var x=(e.clientX/window.innerWidth-.5)*5;
+    var y=(e.clientY/window.innerHeight-.5)*3;
+    hero.style.transform='perspective(1200px) rotateY('+x+'deg) rotateX('+-y+'deg)';
+  });
+}
+
+// ── CTA loading animation ──
+function handleCta(e){
+  e.preventDefault();
+  var btn=document.getElementById('ctaBtn');
+  btn.classList.add('loading');
+  setTimeout(function(){
+    window.location.href='https://calendario-dpa.vercel.app/';
+  },1800);
+}
+</script>
+</body>
+</html>

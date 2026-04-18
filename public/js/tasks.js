@@ -51,6 +51,13 @@ function subscribeToTasks() {
         if (isFirstLoad && loadingScreen) {
             loadingScreen.classList.add('hidden');
             initialLoadComplete = true;
+            // Start onboarding after data loads
+            setTimeout(() => {
+                if (window.startOnboarding) {
+                    const isAdmin = state.user && state.user.role === 'admin';
+                    window.startOnboarding(isAdmin);
+                }
+            }, 600);
         }
 
         if (!isFirstLoad) {
@@ -123,10 +130,6 @@ function animatePageTransition() {
         }})
         .to('.app-content', { opacity: 1, y: 0, duration: 0.6, stagger: 0.15, onComplete: () => {
             setupSwipeGestures();
-            if (window.startOnboarding) {
-                const isAdmin = state.user && state.user.role === 'admin';
-                window.startOnboarding(isAdmin);
-            }
         }});
 }
 
@@ -501,7 +504,9 @@ function openModal(date) {
     renderTaskList(date.toISOString().split('T')[0]);
     modal.classList.remove('hidden');
     gsap.to(modal, { opacity: 1, duration: 0.3 });
-    gsap.fromTo(modal.querySelector('.bottom-sheet'), { y: '100%' }, { y: 0, duration: 0.5, ease: "power3.out" });
+    gsap.fromTo(modal.querySelector('.bottom-sheet'), { y: '100%' }, { y: 0, duration: 0.5, ease: "power3.out", onComplete: () => {
+        if (isAdmin && window.startTaskModalTour) window.startTaskModalTour();
+    }});
 }
 
 window.closeModal = function() {

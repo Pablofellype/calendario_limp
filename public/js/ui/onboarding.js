@@ -1,7 +1,9 @@
-// ─── Onboarding Tutorial System ───
+// ─── Onboarding & Contextual Tours ───
 
 const STORAGE_KEY = 'calendario_onboarding_done';
+const TOUR_PREFIX = 'calendario_tour_';
 
+// ─── MAIN ONBOARDING (first visit only) ───
 const STEPS = [
     {
         target: '.corp-header-logo',
@@ -56,10 +58,52 @@ const ADMIN_STEPS = [
     },
 ];
 
+// ─── CONTEXTUAL TOURS (on first open of each modal) ───
+const TASK_MODAL_TOUR = [
+    {
+        target: '#admin-add-area',
+        title: 'Nova Atividade',
+        text: 'Preencha o nome da atividade e clique em Próximo para atribuir responsáveis.',
+        position: 'bottom'
+    },
+    {
+        target: '#task-list',
+        title: 'Lista de Tarefas',
+        text: 'Veja todas as atividades do dia. Clique no checkbox para concluir (foto obrigatória).',
+        position: 'top'
+    },
+    {
+        target: '#btn-share-schedule',
+        title: 'Compartilhar',
+        text: 'Gere uma imagem da escala do dia para enviar por WhatsApp ou salvar.',
+        position: 'bottom-left'
+    },
+];
+
+const TEAM_MODAL_TOUR = [
+    {
+        target: '#team-search',
+        title: 'Busca Rápida',
+        text: 'Busque colaboradores por nome ou matrícula.',
+        position: 'bottom'
+    },
+    {
+        target: '#team-list',
+        title: 'Lista da Equipe',
+        text: 'Clique em um colaborador para editar seus dados, foto ou PIN de acesso.',
+        position: 'top'
+    },
+];
+
+// ─── ENGINE ───
 let currentStep = 0;
 let activeSteps = [];
+let activeTourKey = null;
 
 function createOverlay() {
+    let existing = document.getElementById('onboarding-overlay');
+    if (existing) existing.remove();
+
     const overlay = document.createElement('div');
     overlay.id = 'onboarding-overlay';
     overlay.className = 'onboarding-overlay';
@@ -70,7 +114,7 @@ function createOverlay() {
             <h4 class="onboarding-title"></h4>
             <p class="onboarding-text"></p>
             <div class="onboarding-actions">
-                <button class="onboarding-skip">Pular Tour</button>
+                <button class="onboarding-skip">Pular</button>
                 <button class="onboarding-next">Próximo</button>
             </div>
         </div>
@@ -87,7 +131,7 @@ function createOverlay() {
 
 function positionStep(step) {
     const el = document.querySelector(step.target);
-    if (!el) { nextStep(); return; }
+    if (!el || el.offsetParent === null) { nextStep(); return; }
 
     const rect = el.getBoundingClientRect();
     const spotlight = document.getElementById('onboarding-spotlight');
@@ -139,33 +183,62 @@ function endTour() {
         overlay.classList.remove('active');
         setTimeout(() => overlay.remove(), 300);
     }
-    localStorage.setItem(STORAGE_KEY, 'true');
+    if (activeTourKey) {
+        localStorage.setItem(activeTourKey, 'true');
+    }
+    activeTourKey = null;
 }
 
-export function startOnboarding(isAdmin = false) {
-    if (localStorage.getItem(STORAGE_KEY)) return;
+function runTour(steps, storageKey) {
+    if (localStorage.getItem(storageKey)) return;
 
-    activeSteps = [...STEPS];
-    if (isAdmin) activeSteps.push(...ADMIN_STEPS);
-
-    activeSteps = activeSteps.filter(s => {
+    // Filter to visible targets
+    const visible = steps.filter(s => {
         const el = document.querySelector(s.target);
         return el && !el.classList.contains('hidden') && el.offsetParent !== null;
     });
 
-    if (activeSteps.length === 0) return;
+    if (visible.length === 0) return;
+
+    activeSteps = visible;
     currentStep = 0;
+    activeTourKey = storageKey;
 
     setTimeout(() => {
         createOverlay();
         positionStep(activeSteps[0]);
-    }, 800);
+    }, 600);
 }
 
-window.startOnboarding = startOnboarding;
+// ─── PUBLIC API ───
 
+// Main onboarding (after first data load)
+export function startOnboarding(isAdmin = false) {
+    const steps = [...STEPS];
+    if (isAdmin) steps.push(...ADMIN_STEPS);
+    runTour(steps, STORAGE_KEY);
+}
+
+// Contextual: task modal opened
+export function startTaskModalTour() {
+    runTour(TASK_MODAL_TOUR, TOUR_PREFIX + 'task_modal');
+}
+
+// Contextual: team modal opened
+export function startTeamModalTour() {
+    runTour(TEAM_MODAL_TOUR, TOUR_PREFIX + 'team_modal');
+}
+
+// Global access
+window.startOnboarding = startOnboarding;
+window.startTaskModalTour = startTaskModalTour;
+window.startTeamModalTour = startTeamModalTour;
+
+// Manual re-run (help button)
 window.resetOnboarding = function() {
     localStorage.removeItem(STORAGE_KEY);
+    localStorage.removeItem(TOUR_PREFIX + 'task_modal');
+    localStorage.removeItem(TOUR_PREFIX + 'team_modal');
     const isAdmin = document.getElementById('btn-team-management') &&
         !document.getElementById('btn-team-management').classList.contains('hidden');
     startOnboarding(isAdmin);

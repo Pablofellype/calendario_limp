@@ -48,7 +48,9 @@ window.openTeamModal = async function() {
     const modal = document.getElementById('team-modal');
     modal.classList.remove('hidden');
     gsap.to(modal, { opacity: 1, duration: 0.3 });
-    gsap.fromTo(modal.querySelector('.bottom-sheet'), { y: '100%' }, { y: 0, duration: 0.5, ease: "power3.out" });
+    gsap.fromTo(modal.querySelector('.bottom-sheet'), { y: '100%' }, { y: 0, duration: 0.5, ease: "power3.out", onComplete: () => {
+        if (window.startTeamModalTour) window.startTeamModalTour();
+    }});
 }
 
 window.closeTeamModal = function() {
